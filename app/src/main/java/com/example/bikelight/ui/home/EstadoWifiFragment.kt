@@ -32,7 +32,7 @@ class EstadoWifiFragment : Fragment() {
         // simulación de estados
         simularEstadosWifi()
 
-        // Opcional: permitir al usuario tocar la imagen/pantalla para reiniciar la simulación
+        // tocar la imagen/pantalla para reiniciar la simulación
         binding.ivWifiIcon.setOnClickListener {
             simularEstadosWifi()
         }
@@ -42,14 +42,14 @@ class EstadoWifiFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             // estado inicial (buscando...)
             binding.tvWifiStatusDetail.text = "Buscando dispositivo..."
-            binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#FFA500")) // Naranja
-            binding.ivWifiIcon.alpha = 0.5f // Efecto visual atenuado
+            binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#FFA500"))
+            binding.ivWifiIcon.alpha = 0.5f // efecto visual atenuado
 
-            delay(2500) // Simula 2.5 segundos de espera
+            delay(2500) // simulación 2.5 segundos de espera
 
             // estado conectado con el dispositivo
             binding.tvWifiStatusDetail.text = "Conectado al dispositivo"
-            binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#2E7D32")) // Verde
+            binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#2E7D32"))
             binding.ivWifiIcon.alpha = 1.0f
             // imagen para cuando está conectado
             binding.ivWifiIcon.setImageResource(R.drawable.wifi_conectado)

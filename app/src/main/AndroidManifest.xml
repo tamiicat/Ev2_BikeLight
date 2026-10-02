@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BikeLight">
 
-        <!-- Pantalla inicial de Inicio de Sesión (Login) -->
+        <!-- inicio de sesión -->
         <activity
             android:name=".ui.auth.AuthActivity"
             android:exported="true"
@@ -31,26 +31,16 @@
             </intent-filter>
         </activity>
 
-        <!-- Pantalla de Registro separada -->
+        <!-- registrar cuenta -->
         <activity
             android:name=".ui.auth.RegisterActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <!-- Pantalla Principal -->
+        <!-- ppntalla Principal -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-
-        <!-- Pantalla Configuración Wi-Fi -->
-        <activity
-            android:name=".ui.home.WifiConfigActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".ui.home.BuzzerActivity"
-            android:exported="false" />
     </application>
 </manifest>

@@ -13,7 +13,7 @@
         android:alignmentMode="alignMargins"
         android:columnOrderPreserved="false">
 
-        <!-- Estado WiFi -->
+        <!-- estado wifi -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardEstadoWifi"
             android:layout_width="0dp"
@@ -33,7 +33,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Configuración WiFi -->
+        <!-- configuración WiFi -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardConfigWifi"
             android:layout_width="0dp"
@@ -54,7 +54,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Bicicleta -->
+        <!-- bicicleta -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardBicicleta"
             android:layout_width="0dp"
@@ -74,7 +74,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Modo Proximidad -->
+        <!-- modo proximidad -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardModoProximidad"
             android:layout_width="0dp"
@@ -95,7 +95,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Configuración Buzzer -->
+        <!-- configuración buzzer -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardConfigBuzzer"
             android:layout_width="0dp"
@@ -116,7 +116,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Configuración LED -->
+        <!-- configuración LED -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardConfigLed"
             android:layout_width="0dp"
@@ -137,7 +137,7 @@
                 android:textSize="14sp" />
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Preferencias -->
+        <!-- preferencias -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardPreferencias"
             android:layout_width="0dp"
