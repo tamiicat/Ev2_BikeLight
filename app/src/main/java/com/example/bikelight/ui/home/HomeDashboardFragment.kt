@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import android.content.Intent
 import com.example.bikelight.MainActivity
+import com.example.bikelight.ui.home.WifiConfigActivity
+import com.example.bikelight.ui.home.BuzzerActivity // 1. Import de BuzzerActivity
 import com.example.bikelight.R
 import com.example.bikelight.databinding.FragmentHomeDashboardBinding
 
@@ -43,11 +46,15 @@ class HomeDashboardFragment : Fragment() {
         }
 
         binding.cardConfigWifi.setOnClickListener {
-            Toast.makeText(requireContext(), "Configuración WiFi", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), WifiConfigActivity::class.java)
+            startActivity(intent)
         }
+
         binding.cardConfigBuzzer.setOnClickListener {
-            Toast.makeText(requireContext(), "Configuración Buzzer", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), BuzzerActivity::class.java)
+            startActivity(intent)
         }
+
         binding.cardConfigLed.setOnClickListener {
             Toast.makeText(requireContext(), "Configuración LED", Toast.LENGTH_SHORT).show()
         }
