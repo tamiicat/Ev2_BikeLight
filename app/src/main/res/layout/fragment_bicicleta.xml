@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardFichaBicicleta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ficha de la Bicicleta"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/bikelight_text_dark"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/tvDisplayTipo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo: No registrado"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDisplayMarca"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Marca: No registrada"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDisplayModelo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Modelo: No registrado"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDisplayAno"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Año: No registrado"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:id="@+id/tvDisplayColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Color: No registrado" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Actualizar Datos"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/bikelight_text_dark"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etBikeTipo"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej. Montaña, Ruta, Urbana"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Marca"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etBikeMarca"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej. Trek, Giant, Specialized"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Modelo"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etBikeModelo"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej. Marlin 7"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Año"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etBikeAno"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:inputType="number"
+            android:hint="Ej. 2024"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Color"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etBikeColor"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="Ej. Negro Mate"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginBottom="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGuardarBici"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Guardar Información"
+            app:backgroundTint="@color/bikelight_header" />
+    </LinearLayout>
+</ScrollView>
