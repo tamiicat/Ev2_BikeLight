@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="@color/bikelight_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +34,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="24dp" />
 
-        <!-- Campos adicionales para registro -->
+        <!-- campos adicionales para registro -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilFullName"
             android:layout_width="match_parent"
@@ -108,7 +109,7 @@
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Botones de Acción -->
+        <!-- botones de acción -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAction"
             android:layout_width="match_parent"

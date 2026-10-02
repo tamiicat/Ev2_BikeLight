@@ -17,11 +17,10 @@
 
     <ImageView
         android:id="@+id/ivWifiIcon"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
-        android:src="@android:drawable/ic_dialog_info"
-        android:contentDescription="Icono WiFi"
-        android:layout_marginBottom="32dp" />
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:src="@drawable/wifi"
+        android:contentDescription="Icono WiFi" />
 
     <TextView
         android:id="@+id/tvWifiStatusDetail"

@@ -5,24 +5,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.example.bikelight.MainActivity
-import com.example.bikelight.data.local.AppDatabase
-import com.example.bikelight.data.local.UserProfile
 import com.example.bikelight.databinding.ActivityAutenticacionBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAutenticacionBinding
     private lateinit var auth: FirebaseAuth
-    private val dbRef = FirebaseDatabase.getInstance().reference
-    private lateinit var localDb: AppDatabase
-    private var isLoginMode = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +20,6 @@ class AuthActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        localDb = AppDatabase.getDatabase(this)
 
         // Comprobar si ya existe una sesión iniciada
         if (auth.currentUser != null) {
@@ -38,83 +27,35 @@ class AuthActivity : AppCompatActivity() {
             return
         }
 
-        configurarVistas()
+        // Ocultar campos innecesarios en la vista si reutilizas el layout
+        binding.tilFullName.visibility = View.GONE
+        binding.tilUsername.visibility = View.GONE
+        binding.tilPhone.visibility = View.GONE
+        binding.btnAction.text = "Iniciar Sesión"
+        binding.tvSwitchMode.text = "¿No tienes cuenta? Regístrate aquí"
 
-        // Acción del botón principal (Iniciar Sesión o Registro)
+        // Iniciar sesión
         binding.btnAction.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             val pass = binding.etPassword.text.toString().trim()
 
-            if (isLoginMode) {
-                if (email.isEmpty()) {
-                    binding.etEmail.error = "Ingresa tu correo"
-                    binding.etEmail.requestFocus()
-                    return@setOnClickListener
-                }
-                if (pass.isEmpty()) {
-                    binding.etPassword.error = "Ingresa tu contraseña"
-                    binding.etPassword.requestFocus()
-                    return@setOnClickListener
-                }
-                iniciarSesion(email, pass)
-            } else {
-                val fullName = binding.etFullName.text.toString().trim()
-                val username = binding.etUsername.text.toString().trim()
-                val phone = binding.etPhone.text.toString().trim()
-
-                if (fullName.isEmpty()) {
-                    binding.etFullName.error = "El nombre completo es obligatorio"
-                    binding.etFullName.requestFocus()
-                    return@setOnClickListener
-                }
-                if (username.isEmpty()) {
-                    binding.etUsername.error = "El nombre de usuario es obligatorio"
-                    binding.etUsername.requestFocus()
-                    return@setOnClickListener
-                }
-                if (email.isEmpty()) {
-                    binding.etEmail.error = "El correo electrónico es obligatorio"
-                    binding.etEmail.requestFocus()
-                    return@setOnClickListener
-                }
-                if (phone.isEmpty()) {
-                    binding.etPhone.error = "El teléfono es obligatorio"
-                    binding.etPhone.requestFocus()
-                    return@setOnClickListener
-                }
-                if (pass.isEmpty() || pass.length < 6) {
-                    binding.etPassword.error = "La contraseña debe tener mínimo 6 caracteres"
-                    binding.etPassword.requestFocus()
-                    return@setOnClickListener
-                }
-
-                registrarUsuario(email, pass, fullName, username, phone)
+            if (email.isEmpty()) {
+                binding.etEmail.error = "Ingresa tu correo"
+                binding.etEmail.requestFocus()
+                return@setOnClickListener
             }
+            if (pass.isEmpty()) {
+                binding.etPassword.error = "Ingresa tu contraseña"
+                binding.etPassword.requestFocus()
+                return@setOnClickListener
+            }
+            iniciarSesion(email, pass)
         }
 
+        // Ir a la pantalla de Registro
         binding.tvSwitchMode.setOnClickListener {
-            isLoginMode = !isLoginMode
-            actualizarModo()
-        }
-    }
-
-    private fun configurarVistas() {
-        actualizarModo()
-    }
-
-    private fun actualizarModo() {
-        if (isLoginMode) {
-            binding.tilFullName.visibility = View.GONE
-            binding.tilUsername.visibility = View.GONE
-            binding.tilPhone.visibility = View.GONE
-            binding.btnAction.text = "Iniciar Sesión"
-            binding.tvSwitchMode.text = "¿No tienes cuenta? Regístrate aquí"
-        } else {
-            binding.tilFullName.visibility = View.VISIBLE
-            binding.tilUsername.visibility = View.VISIBLE
-            binding.tilPhone.visibility = View.VISIBLE
-            binding.btnAction.text = "Registrarse"
-            binding.tvSwitchMode.text = "¿Ya tienes cuenta? Inicia sesión"
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -126,51 +67,6 @@ class AuthActivity : AppCompatActivity() {
             } else {
                 val errorMsg = task.exception?.localizedMessage ?: "Error de autenticación"
                 Toast.makeText(this, "Error al iniciar sesión: $errorMsg", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    private fun registrarUsuario(
-        email: String,
-        pass: String,
-        fullName: String,
-        username: String,
-        phone: String
-    ) {
-        auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
-
-                val user = UserProfile(
-                    uid = uid,
-                    email = email,
-                    fullName = fullName,
-                    username = username,
-                    phone = phone
-                )
-
-                // 1. Guardar en Firebase Realtime Database
-                dbRef.child("users").child(uid).setValue(user).addOnCompleteListener { syncTask ->
-                    if (syncTask.isSuccessful) {
-                        // 2. Guardar en Room (SQLite local)
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            localDb.userDao().saveUserProfile(user)
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(this@AuthActivity, "Cuenta creada exitosamente", Toast.LENGTH_SHORT).show()
-                                irAMain()
-                            }
-                        }
-                    } else {
-                        Toast.makeText(
-                            this@AuthActivity,
-                            "Usuario creado con aviso: ${syncTask.exception?.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            } else {
-                val errorMsg = task.exception?.localizedMessage ?: "No se pudo registrar"
-                Toast.makeText(this, "Error al crear cuenta: $errorMsg", Toast.LENGTH_LONG).show()
             }
         }
     }

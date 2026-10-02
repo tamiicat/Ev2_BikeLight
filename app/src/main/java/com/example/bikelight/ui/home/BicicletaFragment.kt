@@ -70,18 +70,20 @@ class BicicletaFragment : Fragment() {
     private fun pintarFichaYCampos(user: UserProfile) {
         if (_binding == null) return
 
-        // Actualizar tarjeta superior (convirtiendo bikeAno a String)
+        val anoString = if (user.bikeAno == null || user.bikeAno == 0) null else user.bikeAno.toString()
+
+        // Actualizar tarjeta superior
         binding.tvDisplayTipo.text = "Tipo: ${valorOValorPorDefecto(user.bikeTipo, "No registrado")}"
         binding.tvDisplayMarca.text = "Marca: ${valorOValorPorDefecto(user.bikeMarca, "No registrada")}"
         binding.tvDisplayModelo.text = "Modelo: ${valorOValorPorDefecto(user.bikeModelo, "No registrado")}"
-        binding.tvDisplayAno.text = "Año: ${valorOValorPorDefecto(user.bikeAno?.toString(), "No registrado")}"
+        binding.tvDisplayAno.text = "Año: ${valorOValorPorDefecto(anoString, "No registrado")}"
         binding.tvDisplayColor.text = "Color: ${valorOValorPorDefecto(user.bikeColor, "No registrado")}"
 
-        // Rellenar campos del formulario (convirtiendo bikeAno a String para setText)
+        // Rellenar campos del formulario (si es null se deja vacío para ver el hint)
         binding.etBikeTipo.setText(user.bikeTipo ?: "")
         binding.etBikeMarca.setText(user.bikeMarca ?: "")
         binding.etBikeModelo.setText(user.bikeModelo ?: "")
-        binding.etBikeAno.setText(user.bikeAno?.toString() ?: "")
+        binding.etBikeAno.setText(anoString ?: "")
         binding.etBikeColor.setText(user.bikeColor ?: "")
     }
     private fun guardarDatosBicicleta() {
