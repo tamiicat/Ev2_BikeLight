@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:clipToPadding="false"
     android:padding="20dp">
 
     <LinearLayout
@@ -146,11 +148,13 @@
             android:background="@android:drawable/editbox_background_normal"
             android:layout_marginBottom="20dp" />
 
+        <!-- Se añade marginBottom="32dp" para que al scrollear no quede pegado al fondo -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGuardarBici"
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:text="Guardar Información"
+            android:layout_marginBottom="32dp"
             app:backgroundTint="@color/bikelight_header" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

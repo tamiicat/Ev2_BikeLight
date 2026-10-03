@@ -96,6 +96,5 @@
             android:layout_marginBottom="20dp"
             app:cornerRadius="10dp"
             app:backgroundTint="@color/bikelight_card" />
-
     </LinearLayout>
 </ScrollView>

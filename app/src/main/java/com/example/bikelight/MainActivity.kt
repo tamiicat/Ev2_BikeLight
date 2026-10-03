@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         setupBottomNavigation()
 
-        // Cargar por defecto la pantalla principal (Home)
+        // cargar pantalla principal por defecto
         if (savedInstanceState == null) {
             binding.bottomNavigation.selectedItemId = R.id.nav_home
         }

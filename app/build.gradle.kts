@@ -34,7 +34,7 @@ kotlin {
 }
 
 dependencies {
-    // exntensión de idiomas
+    // extensión de idiomas
     implementation(libs.androidx.core.ktx)
     // componentes visuales modernos
     implementation(libs.androidx.appcompat)

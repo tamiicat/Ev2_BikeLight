@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:padding="20dp">
 
     <LinearLayout
@@ -11,20 +13,22 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- conexión con microcontrolador -->
+        <!-- conexión a la red del ESP32 -->
+
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Paso 1: Red del Microcontrolador"
+            android:layout_marginTop="40dp"
+            android:text="Punto de Acceso - ESP32"
+            android:textColor="?attr/colorPrimary"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorPrimary" />
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Conéctate al punto de acceso provisional generado por el hardware."
+            android:layout_marginTop="8dp"
+            android:text="Conéctate a la red Wi-Fi creada por el ESP32 para iniciar la configuración."
             android:textSize="14sp"
             android:textColor="?android:attr/textColorSecondary" />
 
@@ -33,83 +37,41 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="SSID del dispositivo (ej. ESP32_Setup)">
+            android:layout_marginTop="15dp"
+            android:hint="SSID del ESP32">
 
             <com.google.android.material.textfield.TextInputEditText
+
                 android:id="@+id/etDeviceAp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnConnectDevice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Vincular con Dispositivo" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="24dp"
-            android:background="?android:attr/listDivider" />
-
-        <!-- red local -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Paso 2: Red Wi-Fi de Destino"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorPrimary" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Ingresa el nombre y clave de la red local a la que se conectará el microcontrolador."
-            android:textSize="14sp"
-            android:textColor="?android:attr/textColorSecondary" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilNetworkSsid"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:hint="Nombre de tu red (SSID)">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNetworkSsid"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:text="ESP32"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilNetworkPass"
+            android:id="@+id/tilDeviceApPass"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:hint="Contraseña de la red"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNetworkPass"
+                android:id="@+id/etDeviceApPass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSendCredentials"
+
+            android:id="@+id/btnConnectDevice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Enviar Configuración al Dispositivo" />
+            android:layout_marginTop="10dp"
+            android:text="Conectar" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -118,6 +80,5 @@
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
             android:visibility="gone" />
-
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

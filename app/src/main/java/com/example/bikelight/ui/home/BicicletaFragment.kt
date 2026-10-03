@@ -53,19 +53,28 @@ class BicicletaFragment : Fragment() {
                 user?.let { pintarFichaYCampos(it) }
             }
 
-            // Sincronizar desde Firebase Realtime Database
+            // sincronizar datos desde firebase realtime database
             FirebaseDatabase.getInstance().reference.child("users").child(uid).get()
                 .addOnSuccessListener { snapshot ->
-                    val userFirebase = snapshot.getValue(UserProfile::class.java)
-                    userFirebase?.let {
-                        pintarFichaYCampos(it)
-                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                            db.userDao().saveUserProfile(it)
+                    try {
+                        val userFirebase = snapshot.getValue(UserProfile::class.java)
+                        userFirebase?.let { profile ->
+                            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                                pintarFichaYCampos(profile)
+                            }
+                            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                                db.userDao().saveUserProfile(profile)
+                            }
                         }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
+                }
+                .addOnFailureListener {
                 }
         }
     }
+
 
     private fun pintarFichaYCampos(user: UserProfile) {
         if (_binding == null) return
@@ -93,32 +102,37 @@ class BicicletaFragment : Fragment() {
         val tipo = binding.etBikeTipo.text.toString().trim()
         val marca = binding.etBikeMarca.text.toString().trim()
         val modelo = binding.etBikeModelo.text.toString().trim()
-        val ano = binding.etBikeAno.text.toString().trim()
+        val anoStr = binding.etBikeAno.text.toString().trim()
+        val anoInt = anoStr.toIntOrNull() // Convierte a Int para coincidir con UserProfile
         val color = binding.etBikeColor.text.toString().trim()
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val db = AppDatabase.getDatabase(safeContext)
-            db.userDao().updateBikeInfo(uid, tipo, marca, modelo, ano, color)
 
-            val bikeMap = mapOf(
+            db.userDao().updateBikeInfo(uid, tipo, marca, modelo, anoStr, color)
+
+            val bikeMap: Map<String, Any?> = mapOf(
                 "bikeTipo" to tipo,
                 "bikeMarca" to marca,
                 "bikeModelo" to modelo,
-                "bikeAno" to ano,
+                "bikeAno" to anoInt,
                 "bikeColor" to color
             )
-            FirebaseDatabase.getInstance().reference.child("users").child(uid).updateChildren(bikeMap)
 
-            withContext(Dispatchers.Main) {
-                if (_binding != null) {
-                    binding.tvDisplayTipo.text = "Tipo: ${valorOValorPorDefecto(tipo, "No registrado")}"
-                    binding.tvDisplayMarca.text = "Marca: ${valorOValorPorDefecto(marca, "No registrada")}"
-                    binding.tvDisplayModelo.text = "Modelo: ${valorOValorPorDefecto(modelo, "No registrado")}"
-                    binding.tvDisplayAno.text = "Año: ${valorOValorPorDefecto(ano, "No registrado")}"
-                    binding.tvDisplayColor.text = "Color: ${valorOValorPorDefecto(color, "No registrado")}"
+            FirebaseDatabase.getInstance().reference.child("users").child(uid)
+                .updateChildren(bikeMap)
+                .addOnSuccessListener {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        if (_binding != null) {
+                            binding.tvDisplayTipo.text = "Tipo: ${valorOValorPorDefecto(tipo, "No registrado")}"
+                            binding.tvDisplayMarca.text = "Marca: ${valorOValorPorDefecto(marca, "No registrada")}"
+                            binding.tvDisplayModelo.text = "Modelo: ${valorOValorPorDefecto(modelo, "No registrado")}"
+                            binding.tvDisplayAno.text = "Año: ${valorOValorPorDefecto(anoStr, "No registrado")}"
+                            binding.tvDisplayColor.text = "Color: ${valorOValorPorDefecto(color, "No registrado")}"
+                            Toast.makeText(safeContext, "Información guardada exitosamente", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
-                Toast.makeText(safeContext, "Información guardada exitosamente", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 

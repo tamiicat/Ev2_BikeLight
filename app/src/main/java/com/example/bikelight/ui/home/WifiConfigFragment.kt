@@ -40,41 +40,35 @@ class WifiConfigFragment : Fragment() {
 
     private fun setupListeners() {
         binding.btnConnectDevice.setOnClickListener {
-            val deviceSsid = binding.etDeviceAp.text.toString().trim()
-            if (deviceSsid.isEmpty()) {
-                binding.tilDeviceAp.error = "Ingresa el SSID del microcontrolador"
+            val ssid = binding.etDeviceAp.text.toString().trim()
+            val pass = binding.etDeviceApPass.text.toString().trim()
+
+            if (ssid.isEmpty()) {
+                binding.tilDeviceAp.error = "Ingresa el SSID del ESP32"
                 return@setOnClickListener
             }
             binding.tilDeviceAp.error = null
-            connectToDeviceAp(deviceSsid)
-        }
 
-        binding.btnSendCredentials.setOnClickListener {
-            val targetSsid = binding.etNetworkSsid.text.toString().trim()
-            val targetPass = binding.etNetworkPass.text.toString().trim()
-
-            if (targetSsid.isEmpty()) {
-                binding.tilNetworkSsid.error = "Ingresa el nombre de la red"
-                return@setOnClickListener
-            }
-            binding.tilNetworkSsid.error = null
-
-            sendWifiCredentials(targetSsid, targetPass)
+            connectToEsp32Ap(ssid, pass)
         }
     }
 
-    private fun connectToDeviceAp(ssid: String) {
+    private fun connectToEsp32Ap(ssid: String, pass: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             binding.progressBar.visibility = View.VISIBLE
+            binding.btnConnectDevice.isEnabled = false
 
-            val specifier = WifiNetworkSpecifier.Builder()
-                .setSsid(ssid)
-                .build()
+            unregisterNetworkCallback()
+
+            val specifierBuilder = WifiNetworkSpecifier.Builder().setSsid(ssid)
+            if (pass.isNotEmpty()) {
+                specifierBuilder.setWpa2Passphrase(pass)
+            }
 
             val request = NetworkRequest.Builder()
                 .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                 .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .setNetworkSpecifier(specifier)
+                .setNetworkSpecifier(specifierBuilder.build())
                 .build()
 
             networkCallback = object : ConnectivityManager.NetworkCallback() {
@@ -83,7 +77,8 @@ class WifiConfigFragment : Fragment() {
                     connectivityManager?.bindProcessToNetwork(network)
                     activity?.runOnUiThread {
                         _binding?.progressBar?.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Conectado a $ssid", Toast.LENGTH_SHORT).show()
+                        _binding?.btnConnectDevice?.isEnabled = true
+                        Toast.makeText(requireContext(), "Conectado al punto de acceso $ssid", Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -91,29 +86,41 @@ class WifiConfigFragment : Fragment() {
                     super.onUnavailable()
                     activity?.runOnUiThread {
                         _binding?.progressBar?.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Conexión rechazada o cancelada", Toast.LENGTH_SHORT).show()
+                        _binding?.btnConnectDevice?.isEnabled = true
+                        Toast.makeText(requireContext(), "Conexión rechazada o no encontrada", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    activity?.runOnUiThread {
+                        Toast.makeText(requireContext(), "Conexión con el ESP32 finalizada", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
 
             networkCallback?.let { connectivityManager?.requestNetwork(request, it) }
         } else {
-            Toast.makeText(requireContext(), "Conéctate manualmente a '$ssid' desde los Ajustes del sistema", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                requireContext(),
+                "En Android 9 o inferior, conéctate a '$ssid' manualmente desde Ajustes de Wi-Fi",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
-    private fun sendWifiCredentials(ssid: String, pass: String) {
-        binding.progressBar.visibility = View.VISIBLE
-
-        binding.root.postDelayed({
-            _binding?.progressBar?.visibility = View.GONE
-            Toast.makeText(requireContext(), "Credenciales enviadas correctamente al dispositivo", Toast.LENGTH_LONG).show()
-        }, 1500)
+    private fun unregisterNetworkCallback() {
+        networkCallback?.let {
+            try {
+                connectivityManager?.unregisterNetworkCallback(it)
+            } catch (_: Exception) {}
+            networkCallback = null
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        networkCallback?.let { connectivityManager?.unregisterNetworkCallback(it) }
+        unregisterNetworkCallback()
         connectivityManager?.bindProcessToNetwork(null)
         _binding = null
     }

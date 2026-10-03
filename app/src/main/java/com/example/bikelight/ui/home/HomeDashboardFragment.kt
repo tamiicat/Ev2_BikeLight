@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import android.content.Intent
 import com.example.bikelight.MainActivity
 import com.example.bikelight.databinding.FragmentHomeDashboardBinding
 
@@ -51,8 +50,9 @@ class HomeDashboardFragment : Fragment() {
         }
 
         binding.cardConfigLed.setOnClickListener {
-            Toast.makeText(requireContext(), "Configuración LED", Toast.LENGTH_SHORT).show()
+            mainActivity?.cargarFragment(LedConfigFragment(), "Configuración LED")
         }
+
         binding.cardPreferencias.setOnClickListener {
             Toast.makeText(requireContext(), "Preferencias", Toast.LENGTH_SHORT).show()
         }

@@ -18,10 +18,8 @@ import com.example.bikelight.R
 import com.example.bikelight.databinding.FragmentBuzzerConfigBinding
 
 class BuzzerFragment : Fragment() {
-
     private var _binding: FragmentBuzzerConfigBinding? = null
     private val binding get() = _binding!!
-
     private var toneGenerator: ToneGenerator? = null
     private var isSimulando: Boolean = false
 
@@ -37,15 +35,31 @@ class BuzzerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Generador de tono
+        // generador de tono
         toneGenerator = ToneGenerator(AudioManager.STREAM_ALARM, 100)
 
-        // Adaptadores para los Spinners
-        val opcionesFrecuencia = arrayOf("Seleccione una opción", "Opción 1 (1000 Hz)", "Opción 2 (2400 Hz)")
-        val opcionesDuracion = arrayOf("Seleccione una opción", "0.10s", "0.50s", "1.00s")
+        // frecuencias buzzer
+        val opcionesFrecuencia = arrayOf(
+            "Seleccione una opción",
+            "Tono Grave (1000 Hz)",
+            "Tono Medio (1500 Hz)",
+            "Estándar (2000 Hz)",
+            "Alerta de Tráfico (2500 Hz)",
+            "Tono Agudo (4000 Hz)"
+        )
 
-        val adapterFrec = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesFrecuencia)
-        val adapterDur = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesDuracion)
+        // duración buzzer
+        val opcionesDuracion = arrayOf(
+            "Seleccione una opción",
+            "Pulso Ultracorto (0.05s)",
+            "Pitido Estándar(0.10s)",
+            "Pulso Medio (0.25s)",
+            "Advertencia (0.50)",
+            "Tono Continuo (1.00)"
+        )
+
+        val adapterFrec = ArrayAdapter(requireContext(), R.drawable.item_spinner_buzzer, opcionesFrecuencia)
+        val adapterDur = ArrayAdapter(requireContext(), R.drawable.item_spinner_buzzer, opcionesDuracion)
 
         binding.spinnerFrecuencia.adapter = adapterFrec
         binding.spinnerDuracion.adapter = adapterDur
