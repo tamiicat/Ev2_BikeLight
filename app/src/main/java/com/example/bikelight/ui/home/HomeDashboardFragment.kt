@@ -37,8 +37,8 @@ class HomeDashboardFragment : Fragment() {
             mainActivity?.cargarFragment(ModoProximidadFragment(), "Modo Proximidad")
         }
 
-        binding.cardSos.setOnClickListener {
-            Toast.makeText(requireContext(), "EMERGENCIA ACTIVADA", Toast.LENGTH_SHORT).show()
+        binding.cardContactoEmergencia.setOnClickListener {
+            mainActivity?.cargarFragment(EmergencyContactFragment(), "Contacto de Emergencia")
         }
 
         binding.cardConfigWifi.setOnClickListener {
