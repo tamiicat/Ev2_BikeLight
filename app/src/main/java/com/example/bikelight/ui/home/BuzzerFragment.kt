@@ -58,8 +58,8 @@ class BuzzerFragment : Fragment() {
             "Tono Continuo (1.00)"
         )
 
-        val adapterFrec = ArrayAdapter(requireContext(), R.drawable.item_spinner_buzzer, opcionesFrecuencia)
-        val adapterDur = ArrayAdapter(requireContext(), R.drawable.item_spinner_buzzer, opcionesDuracion)
+        val adapterFrec = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesFrecuencia)
+        val adapterDur = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesDuracion)
 
         binding.spinnerFrecuencia.adapter = adapterFrec
         binding.spinnerDuracion.adapter = adapterDur
