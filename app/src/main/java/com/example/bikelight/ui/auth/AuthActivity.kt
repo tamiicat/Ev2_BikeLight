@@ -21,20 +21,17 @@ class AuthActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // Comprobar si ya existe una sesión iniciada
+        // comprobar si ya existe una sesión iniciada
         if (auth.currentUser != null) {
             irAMain()
             return
         }
 
         // Ocultar campos innecesarios en la vista si reutilizas el layout
-        binding.tilFullName.visibility = View.GONE
-        binding.tilUsername.visibility = View.GONE
-        binding.tilPhone.visibility = View.GONE
         binding.btnAction.text = "Iniciar Sesión"
         binding.tvSwitchMode.text = "¿No tienes cuenta? Regístrate aquí"
 
-        // Iniciar sesión
+        // iniciar sesión
         binding.btnAction.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()
             val pass = binding.etPassword.text.toString().trim()
@@ -52,9 +49,15 @@ class AuthActivity : AppCompatActivity() {
             iniciarSesion(email, pass)
         }
 
-        // Ir a la pantalla de Registro
+        // registrar cuenta
         binding.tvSwitchMode.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
+
+        // restablecer contraseña
+        binding.tvForgotPassword.setOnClickListener {
+            val intent = Intent(this, ResetPasswordActivity::class.java)
             startActivity(intent)
         }
     }

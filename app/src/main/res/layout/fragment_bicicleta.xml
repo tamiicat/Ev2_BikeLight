@@ -20,7 +20,7 @@
             android:layout_marginBottom="20dp"
             app:cardCornerRadius="14dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@color/white">
+            app:cardBackgroundColor="@color/bikelight_card" >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                     android:text="Ficha de la Bicicleta"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@color/bikelight_text_dark"
+                    android:textColor="@color/white"
                     android:layout_marginBottom="12dp" />
 
                 <TextView
@@ -42,6 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tipo: No registrado"
+                    android:textColor="@color/white"
                     android:layout_marginBottom="6dp" />
 
                 <TextView
@@ -49,6 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Marca: No registrada"
+                    android:textColor="@color/white"
                     android:layout_marginBottom="6dp" />
 
                 <TextView
@@ -56,6 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Modelo: No registrado"
+                    android:textColor="@color/white"
                     android:layout_marginBottom="6dp" />
 
                 <TextView
@@ -63,13 +66,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Año: No registrado"
+                    android:textColor="@color/white"
                     android:layout_marginBottom="6dp" />
 
                 <TextView
                     android:id="@+id/tvDisplayColor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Color: No registrado" />
+                    android:text="Color: No registrado"
+                    android:textColor="@color/white" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -79,14 +84,15 @@
             android:text="Actualizar Datos"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/bikelight_text_dark"
+            android:textColor="@color/bikelight_header"
             android:layout_marginBottom="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tipo"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/bikelight_header" />
         <EditText
             android:id="@+id/etBikeTipo"
             android:layout_width="match_parent"
@@ -99,7 +105,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Marca"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/bikelight_header" />
         <EditText
             android:id="@+id/etBikeMarca"
             android:layout_width="match_parent"
@@ -112,7 +119,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Modelo"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/bikelight_header" />
         <EditText
             android:id="@+id/etBikeModelo"
             android:layout_width="match_parent"
@@ -125,7 +133,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Año"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/bikelight_header" />
         <EditText
             android:id="@+id/etBikeAno"
             android:layout_width="match_parent"
@@ -139,7 +148,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Color"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/bikelight_header" />
         <EditText
             android:id="@+id/etBikeColor"
             android:layout_width="match_parent"
@@ -148,13 +158,17 @@
             android:background="@android:drawable/editbox_background_normal"
             android:layout_marginBottom="20dp" />
 
-        <!-- Se añade marginBottom="32dp" para que al scrollear no quede pegado al fondo -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGuardarBici"
             android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Guardar Información"
-            android:layout_marginBottom="32dp"
-            app:backgroundTint="@color/bikelight_header" />
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            app:backgroundTint="@color/bikelight_card"
+            android:text="Desactivar"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"  />
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

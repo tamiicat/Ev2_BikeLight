@@ -166,7 +166,7 @@
             android:layout_margin="15dp"
             android:layout_marginTop="30dp"
             app:cardCornerRadius="14dp"
-            app:cardBackgroundColor="@color/bikelight_card">
+            app:cardBackgroundColor="@color/bikelight_sos">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -74,7 +74,7 @@ class RegisterActivity : AppCompatActivity() {
             registrarUsuario(email, pass, fullName, username, phone)
         }
 
-        // Volver a login
+        // volver a login
         binding.tvSwitchMode.setOnClickListener {
             finish()
         }
@@ -99,15 +99,13 @@ class RegisterActivity : AppCompatActivity() {
                     phone = phone
                 )
 
-                // 1. Guardar en Firebase Realtime Database
+                // guardar5 en Firebase Realtime Database
                 dbRef.child("users").child(uid).setValue(user).addOnCompleteListener { syncTask ->
                     if (syncTask.isSuccessful) {
-                        // 2. Guardar en Room (SQLite local)
+                        // guardar en Room - SQLite local
                         lifecycleScope.launch(Dispatchers.IO) {
                             localDb.userDao().saveUserProfile(user)
                             withContext(Dispatchers.Main) {
-                                // Importante: Firebase inicia sesión automáticamente al crear cuenta.
-                                // Cerramos sesión para que deba ingresar sus credenciales en AuthActivity.
                                 auth.signOut()
 
                                 Toast.makeText(

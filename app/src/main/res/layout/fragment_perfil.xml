@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:text="Nombre"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_text_dark" />
+            android:textColor="@color/bikelight_header" />
         <TextView
             android:id="@+id/tvProfileName"
             android:layout_width="wrap_content"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:text="Correo electrónico"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_text_dark" />
+            android:textColor="@color/bikelight_header" />
         <TextView
             android:id="@+id/tvProfileEmail"
             android:layout_width="wrap_content"
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:text="Teléfono"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_text_dark" />
+            android:textColor="@color/bikelight_header" />
         <TextView
             android:id="@+id/tvProfilePhone"
             android:layout_width="wrap_content"
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="Usuario"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_text_dark" />
+            android:textColor="@color/bikelight_header" />
         <TextView
             android:id="@+id/tvProfileUser"
             android:layout_width="wrap_content"

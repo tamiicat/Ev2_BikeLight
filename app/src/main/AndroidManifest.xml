@@ -37,6 +37,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- restablecer contraseña -->
+        <activity
+            android:name=".ui.auth.ResetPasswordActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- pantalla Principal -->
         <activity
             android:name=".MainActivity"

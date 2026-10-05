@@ -64,37 +64,43 @@
                 android:popupBackground="@color/bikelight_card_dark" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- modo manual -->
         <TextView
+            android:id="@+id/tvLabelModoManual"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             android:text="Modo Manual"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@color/bikelight_text_dark"
-            android:layout_marginBottom="12dp" />
+            android:textColor="@color/bikelight_primary_dark"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
+        <!-- activar leds -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnActivar"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="14dp"
+            app:backgroundTint="@color/bikelight_primary"
             android:text="Activar"
             android:textAllCaps="false"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="12dp"
-            app:cornerRadius="10dp"
-            app:backgroundTint="@color/bikelight_primary" />
+            app:cornerRadius="12dp" />
 
+        <!-- desactivar leds -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDesactivar"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            app:backgroundTint="@color/bikelight_card"
             android:text="Desactivar"
             android:textAllCaps="false"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="20dp"
-            app:cornerRadius="10dp"
-            app:backgroundTint="@color/bikelight_card" />
+            app:cornerRadius="12dp" />
     </LinearLayout>
 </ScrollView>

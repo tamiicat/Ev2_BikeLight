@@ -18,7 +18,7 @@
     <color name="bikelight_text_muted">#79747E</color>
 
     <!-- Botón de Emergencia SOS -->
-    <color name="bikelight_sos">#BA1A1A</color>
+    <color name="bikelight_sos">#d73a2d</color>
     <color name="bikelight_sos_dark">#93000A</color>
 
     <!-- Base -->

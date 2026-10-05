@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="@color/bikelight_bg" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,13 +15,12 @@
         android:orientation="vertical">
 
         <!-- conexión a la red del ESP32 -->
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:text="Punto de Acceso - ESP32"
-            android:textColor="?attr/colorPrimary"
+            android:textColor="@color/bikelight_card_dark"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -30,7 +30,7 @@
             android:layout_marginTop="8dp"
             android:text="Conéctate a la red Wi-Fi creada por el ESP32 para iniciar la configuración."
             android:textSize="14sp"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:textColor="@color/bikelight_primary" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilDeviceAp"
@@ -38,14 +38,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="SSID del ESP32">
+            android:hint="SSID del ESP32"
+            android:textColorHint="@color/bikelight_header" >
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/etDeviceAp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ESP32"
+                android:text="Ej. ESP32"
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,22 +56,29 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="Contraseña de la red"
-            app:passwordToggleEnabled="true">
+            android:textColorHint="@color/bikelight_header"
+            app:passwordToggleEnabled="true" >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDeviceApPass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword" />
+                android:text="Ej. ESP32"
+                android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
-
             android:id="@+id/btnConnectDevice"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Conectar" />
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            app:backgroundTint="@color/bikelight_card"
+            android:text="Conectar"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp" />
 
         <ProgressBar
             android:id="@+id/progressBar"
