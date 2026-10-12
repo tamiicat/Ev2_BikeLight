@@ -48,16 +48,20 @@ class PreferenciasFragment : Fragment() {
             mainActivity?.cargarFragment(BorrarCacheFragment(), "Borrado de Caché")
         }
 
-        // configuración msj SOS
+        // contacto de emergencia
+        binding.cardConfigContacto.setOnClickListener {
+            mainActivity?.cargarFragment(EmergencyContactFragment(), "Contacto de Emergencia")
+        }
+
+        // mensaje SOS
         binding.cardConfigMensajeSos.setOnClickListener {
-            (activity as? MainActivity)?.cargarFragment(MensajeSosFragment(), "Configuración Mensaje SOS")
+            mainActivity?.cargarFragment(MensajeSosFragment(), "Configuración Mensaje SOS")
         }
     }
 
     private fun mostrarDialogoTema() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         val modoActual = prefs.getInt("app_theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-
         val opciones = arrayOf("Modo Claro", "Modo Oscuro", "Predeterminado del sistema")
 
         val indiceSeleccionado = when (modoActual) {
@@ -75,10 +79,7 @@ class PreferenciasFragment : Fragment() {
                     else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
                 }
 
-                // guardar
                 prefs.edit().putInt("app_theme_mode", nuevoModo).apply()
-
-                // aplicar cambios
                 AppCompatDelegate.setDefaultNightMode(nuevoModo)
 
                 Toast.makeText(requireContext(), "Tema aplicado: ${opciones[which]}", Toast.LENGTH_SHORT).show()

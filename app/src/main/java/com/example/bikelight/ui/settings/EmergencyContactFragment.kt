@@ -1,4 +1,4 @@
-package com.example.bikelight.ui.home
+package com.example.bikelight.ui.settings
 
 import android.os.Bundle
 import android.util.Patterns
