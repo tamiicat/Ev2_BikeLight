@@ -12,7 +12,7 @@
         android:text="Estado WiFi"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:textColor="@color/bikelight_header"
+        android:textColor="@color/bikelight_primary"
         android:layout_marginBottom="10dp" />
 
     <ImageView

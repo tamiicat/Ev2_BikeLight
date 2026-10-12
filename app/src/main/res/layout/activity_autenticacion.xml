@@ -27,7 +27,7 @@
             android:text="BikeLight"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_header"
+            android:textColor="@color/bikelight_primary"
             android:layout_marginBottom="24dp" />
 
         <!-- email y password -->
@@ -65,7 +65,7 @@
             android:id="@+id/btnAction"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            app:backgroundTint="@color/bikelight_header"
+            app:backgroundTint="@color/bikelight_primary"
             android:textColor="@color/white"
             android:text="Iniciar Sesión" />
 
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textColor="@color/bikelight_header"
+            android:textColor="@color/bikelight_primary"
             android:text="¿No tienes cuenta? Regístrate aquí" />
 
         <TextView
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:textColor="@color/bikelight_header"
+            android:textColor="@color/bikelight_primary"
             android:text="¿Olvidaste tu contraseña?" />
     </LinearLayout>
 </ScrollView>

@@ -65,7 +65,7 @@ class AuthActivity : AppCompatActivity() {
     private fun iniciarSesion(email: String, pass: String) {
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(this, "¡Bienvenido! Sesión iniciada con éxito", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "¡Bienvenidx!", Toast.LENGTH_SHORT).show()
                 irAMain()
             } else {
                 val errorMsg = task.exception?.localizedMessage ?: "Error de autenticación"

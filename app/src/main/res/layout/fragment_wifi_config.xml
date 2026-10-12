@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="Punto de Acceso - ESP32"
-            android:textColor="@color/bikelight_card_dark"
+            android:textColor="@color/bikelight_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
 

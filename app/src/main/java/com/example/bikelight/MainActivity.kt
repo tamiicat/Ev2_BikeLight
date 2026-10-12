@@ -1,8 +1,10 @@
 package com.example.bikelight
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.bikelight.databinding.ActivityMainBinding
 import com.example.bikelight.ui.auth.AuthActivity
@@ -15,13 +17,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // aplicar tema claro/oscuro
+        val prefs = getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
+        val temaGuardado = prefs.getInt("app_theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        AppCompatDelegate.setDefaultNightMode(temaGuardado)
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupBottomNavigation()
 
-        // cargar pantalla principal por defecto
+        // cargar tema por defecto
         if (savedInstanceState == null) {
             binding.bottomNavigation.selectedItemId = R.id.nav_home
         }

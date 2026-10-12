@@ -84,7 +84,7 @@
             android:text="Actualizar Datos"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:textColor="@color/bikelight_header"
+            android:textColor="@color/bikelight_primary"
             android:layout_marginBottom="12dp" />
 
         <TextView
@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:text="Tipo"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_header" />
+            android:textColor="@color/bikelight_primary" />
         <EditText
             android:id="@+id/etBikeTipo"
             android:layout_width="match_parent"
@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:text="Marca"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_header" />
+            android:textColor="@color/bikelight_primary" />
         <EditText
             android:id="@+id/etBikeMarca"
             android:layout_width="match_parent"
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:text="Modelo"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_header" />
+            android:textColor="@color/bikelight_primary" />
         <EditText
             android:id="@+id/etBikeModelo"
             android:layout_width="match_parent"
@@ -134,7 +134,7 @@
             android:layout_height="wrap_content"
             android:text="Año"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_header" />
+            android:textColor="@color/bikelight_primary" />
         <EditText
             android:id="@+id/etBikeAno"
             android:layout_width="match_parent"
@@ -149,7 +149,7 @@
             android:layout_height="wrap_content"
             android:text="Color"
             android:textStyle="bold"
-            android:textColor="@color/bikelight_header" />
+            android:textColor="@color/bikelight_primary" />
         <EditText
             android:id="@+id/etBikeColor"
             android:layout_width="match_parent"
@@ -164,7 +164,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="12dp"
             app:backgroundTint="@color/bikelight_card"
-            android:text="Desactivar"
+            android:text="Guardar"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp"

@@ -102,7 +102,7 @@ class RegisterActivity : AppCompatActivity() {
 
                                 Toast.makeText(
                                     this@RegisterActivity,
-                                    "Cuenta creada exitosamente. Por favor, inicia sesión.",
+                                    "¡Cuenta creada exitosamente!",
                                     Toast.LENGTH_SHORT
                                 ).show()
 

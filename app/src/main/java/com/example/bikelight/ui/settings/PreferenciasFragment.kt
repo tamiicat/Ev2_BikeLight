@@ -1,18 +1,16 @@
 package com.example.bikelight.ui.settings
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.bikelight.MainActivity
 import com.example.bikelight.databinding.FragmentPreferenciasBinding
-import com.example.bikelight.ui.settings.AhorroEnergiaFragment
-import com.example.bikelight.ui.settings.BorrarCacheFragment
 
 class PreferenciasFragment : Fragment() {
 
@@ -28,102 +26,63 @@ class PreferenciasFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val mainActivity = activity as? MainActivity
 
         // tema aplicación
         binding.cardTemaApp.setOnClickListener {
             mostrarDialogoTema()
         }
 
-        // configuración unidades de medidas
+        // unidades de medidas
         binding.cardUnidadesMedida.setOnClickListener {
-            (activity as? MainActivity)?.cargarFragment(UnidadesMedidaFragment(), "Unidades de Medida")
+            mainActivity?.cargarFragment(UnidadesMedidaFragment(), "Unidades de Medida")
         }
 
-        // modo ahorro energia
+        // ahorro de energía
         binding.cardAhorroEnergia.setOnClickListener {
-            (activity as? MainActivity)?.cargarFragment(AhorroEnergiaFragment(), "Ahorro de Energía")
+            mainActivity?.cargarFragment(AhorroEnergiaFragment(), "Ahorro de Energía")
         }
 
         // borrar caché
         binding.cardBorrarCache.setOnClickListener {
-            (activity as? MainActivity)?.cargarFragment(BorrarCacheFragment(), "Borrado de Caché")
+            mainActivity?.cargarFragment(BorrarCacheFragment(), "Borrado de Caché")
         }
 
         // configuración msj SOS
         binding.cardConfigMensajeSos.setOnClickListener {
-            mostrarDialogoMensajeSos()
+            (activity as? MainActivity)?.cargarFragment(MensajeSosFragment(), "Configuración Mensaje SOS")
         }
     }
 
     private fun mostrarDialogoTema() {
+        val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
+        val modoActual = prefs.getInt("app_theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+
         val opciones = arrayOf("Modo Claro", "Modo Oscuro", "Predeterminado del sistema")
-        AlertDialog.Builder(requireContext())
-            .setTitle("Seleccionar Tema")
-            .setItems(opciones) { _, which ->
-                when (which) {
-                    0 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                }
-                Toast.makeText(requireContext(), "Tema aplicado: ${opciones[which]}", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
-    }
 
-    private fun mostrarDialogoUnidades() {
-        val unidades = arrayOf("Métrico (km/h, metros)", "Imperial (mph, pies)")
-        AlertDialog.Builder(requireContext())
-            .setTitle("Unidades de Medida")
-            .setItems(unidades) { _, which ->
-                Toast.makeText(requireContext(), "Seleccionado: ${unidades[which]}", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
-    }
-
-    private fun mostrarDialogoAhorroEnergia() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Modo Ahorro de Energía")
-            .setMessage("Al activarlo, se atenuará el brillo de la pantalla durante el trayecto y se desactivarán animaciones secundarias.")
-            .setPositiveButton("Activar") { _, _ ->
-                Toast.makeText(requireContext(), "Ahorro de energía activado", Toast.LENGTH_SHORT).show()
-            }
-            .setNegativeButton("Desactivar") { _, _ ->
-                Toast.makeText(requireContext(), "Ahorro de energía desactivado", Toast.LENGTH_SHORT).show()
-            }
-            .show()
-    }
-
-    private fun mostrarDialogoMensajeSos() {
-        val input = EditText(requireContext()).apply {
-            hint = "¡Emergencia! He tenido un incidente en bicicleta."
+        val indiceSeleccionado = when (modoActual) {
+            AppCompatDelegate.MODE_NIGHT_NO -> 0
+            AppCompatDelegate.MODE_NIGHT_YES -> 1
+            else -> 2
         }
-        AlertDialog.Builder(requireContext())
-            .setTitle("Mensaje SOS")
-            .setMessage("Personaliza el mensaje que se enviará a tu contacto de emergencia:")
-            .setView(input)
-            .setPositiveButton("Guardar") { _, _ ->
-                val nuevoMensaje = input.text.toString().trim()
-                if (nuevoMensaje.isNotEmpty()) {
-                    Toast.makeText(requireContext(), "Mensaje SOS actualizado", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
-    }
 
-    private fun confirmarBorradoCache() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Borrar Caché")
-            .setMessage("¿Deseas eliminar los datos temporales de la app? Tus configuraciones principales no se perderán.")
-            .setPositiveButton("Borrar") { _, _ ->
-                try {
-                    requireContext().cacheDir.deleteRecursively()
-                    Toast.makeText(requireContext(), "Caché eliminada con éxito", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Toast.makeText(requireContext(), "Error al limpiar caché", Toast.LENGTH_SHORT).show()
+            .setTitle("Tema de la aplicación")
+            .setSingleChoiceItems(opciones, indiceSeleccionado) { dialog, which ->
+                val nuevoModo = when (which) {
+                    0 -> AppCompatDelegate.MODE_NIGHT_NO
+                    1 -> AppCompatDelegate.MODE_NIGHT_YES
+                    else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
                 }
+
+                // guardar
+                prefs.edit().putInt("app_theme_mode", nuevoModo).apply()
+
+                // aplicar cambios
+                AppCompatDelegate.setDefaultNightMode(nuevoModo)
+
+                Toast.makeText(requireContext(), "Tema aplicado: ${opciones[which]}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
             }
             .setNegativeButton("Cancelar", null)
             .show()
