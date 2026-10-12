@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.bikelight.databinding.FragmentAhorroEnergiaBinding
@@ -26,13 +27,13 @@ class AhorroEnergiaFragment : Fragment() {
 
         cargarPreferencias()
 
-        // control padre: si se desactiva el principal, se desactivan los secundarios
+        // control padre: al cambiar el switch principal, habilita/deshabilita los secundarios
         binding.switchAhorroGeneral.setOnCheckedChangeListener { _, isChecked ->
             actualizarEstadoVisual(isChecked)
         }
 
         binding.btnGuardarAhorro.setOnClickListener {
-            guardarPreferencias()
+            guardarYAplicarPreferencias()
         }
     }
 
@@ -56,19 +57,61 @@ class AhorroEnergiaFragment : Fragment() {
         binding.switchAlertaDespertar.isChecked = alertaDespertar
 
         actualizarEstadoVisual(general)
+
+        // aplicar estado
+        aplicarEfectosReales(general, brillo, alertaDespertar)
     }
 
-    private fun guardarPreferencias() {
+    private fun guardarYAplicarPreferencias() {
+        val general = binding.switchAhorroGeneral.isChecked
+        val brillo = binding.switchReducirBrillo.isChecked
+        val animaciones = binding.switchDesactivarAnimaciones.isChecked
+        val alertaDespertar = binding.switchAlertaDespertar.isChecked
+
+        // guardar preferencias
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
-            putBoolean("ahorro_general", binding.switchAhorroGeneral.isChecked)
-            putBoolean("ahorro_reducir_brillo", binding.switchReducirBrillo.isChecked)
-            putBoolean("ahorro_desactivar_animaciones", binding.switchDesactivarAnimaciones.isChecked)
-            putBoolean("ahorro_alerta_despertar", binding.switchAlertaDespertar.isChecked)
+            putBoolean("ahorro_general", general)
+            putBoolean("ahorro_reducir_brillo", brillo)
+            putBoolean("ahorro_desactivar_animaciones", animaciones)
+            putBoolean("ahorro_alerta_despertar", alertaDespertar)
             apply()
         }
 
-        Toast.makeText(requireContext(), "Ajustes de ahorro de energía guardados", Toast.LENGTH_SHORT).show()
+        // aplicar cambios
+        aplicarEfectosReales(general, brillo, alertaDespertar)
+
+        Toast.makeText(requireContext(), "Ajustes aplicados en el dispositivo", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun aplicarEfectosReales(general: Boolean, reducirBrillo: Boolean, soloAlerta: Boolean) {
+        val window = activity?.window ?: return
+        val layoutParams = window.attributes
+
+        if (general) {
+            // reducir brillo
+            if (reducirBrillo) {
+                layoutParams.screenBrightness = 0.15f
+            } else {
+                // brillo automático
+                layoutParams.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+            }
+
+            // encender pantalla por alerta
+            if (soloAlerta) {
+                // funcionamiento normal de pantalla
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                // pantalla encendida
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
+        } else {
+            // restaurar valores normales
+            layoutParams.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
+        window.attributes = layoutParams
     }
 
     override fun onDestroyView() {
