@@ -23,6 +23,24 @@ class BuzzerFragment : Fragment() {
     private var toneGenerator: ToneGenerator? = null
     private var isSimulando: Boolean = false
 
+    private val opcionesFrecuencia = arrayOf(
+        "Seleccione una opción",
+        "Tono Grave (1000 Hz)",
+        "Tono Medio (1500 Hz)",
+        "Estándar (2000 Hz)",
+        "Alerta de Tráfico (2500 Hz)",
+        "Tono Agudo (4000 Hz)"
+    )
+
+    private val opcionesDuracion = arrayOf(
+        "Seleccione una opción",
+        "Pulso Ultracorto (0.05s)",
+        "Pitido Estándar (0.10s)",
+        "Pulso Medio (0.25s)",
+        "Advertencia (0.50s)",
+        "Tono Continuo (1.00s)"
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,40 +53,30 @@ class BuzzerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // generador de tono
         toneGenerator = ToneGenerator(AudioManager.STREAM_ALARM, 100)
 
-        // frecuencias buzzer
-        val opcionesFrecuencia = arrayOf(
-            "Seleccione una opción",
-            "Tono Grave (1000 Hz)",
-            "Tono Medio (1500 Hz)",
-            "Estándar (2000 Hz)",
-            "Alerta de Tráfico (2500 Hz)",
-            "Tono Agudo (4000 Hz)"
-        )
-
-        // duración buzzer
-        val opcionesDuracion = arrayOf(
-            "Seleccione una opción",
-            "Pulso Ultracorto (0.05s)",
-            "Pitido Estándar(0.10s)",
-            "Pulso Medio (0.25s)",
-            "Advertencia (0.50)",
-            "Tono Continuo (1.00)"
-        )
-
+        // configuración
         val adapterFrec = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesFrecuencia)
         val adapterDur = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesDuracion)
 
         binding.spinnerFrecuencia.adapter = adapterFrec
         binding.spinnerDuracion.adapter = adapterDur
 
-        // Botón Activar
+        // valores guardados
+        cargarConfiguracionBuzzer()
+
+        // Guardar configuración
+        binding.btnGuardarBuzzer.setOnClickListener {
+            guardarConfiguracionBuzzer()
+        }
+
+        // activar
         binding.btnActivar.setOnClickListener {
             val duracionTexto = binding.spinnerDuracion.selectedItem.toString()
             val duracionMs = when {
+                duracionTexto.contains("0.05s") -> 50
                 duracionTexto.contains("0.10s") -> 100
+                duracionTexto.contains("0.25s") -> 250
                 duracionTexto.contains("0.50s") -> 500
                 duracionTexto.contains("1.00s") -> 1000
                 else -> 200
@@ -76,10 +84,10 @@ class BuzzerFragment : Fragment() {
 
             isSimulando = true
             ejecutarSimulacion(duracionMs)
-            Toast.makeText(requireContext(), "Simulación Buzzer Activada ($duracionMs ms)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Buzzer Activado ($duracionMs ms)", Toast.LENGTH_SHORT).show()
         }
 
-        // Botón Desactivar
+        // desactivar
         binding.btnDesactivar.setOnClickListener {
             isSimulando = false
             toneGenerator?.stopTone()
@@ -87,11 +95,50 @@ class BuzzerFragment : Fragment() {
         }
     }
 
+    private fun cargarConfiguracionBuzzer() {
+        val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
+        val frecuencia = prefs.getString("buzzer_frecuencia", null)
+        val duracion = prefs.getString("buzzer_duracion", null)
+
+        binding.tvDisplayFrecuencia.text = "Frecuencia: ${frecuencia ?: "No registrada"}"
+        binding.tvDisplayDuracion.text = "Duración: ${duracion ?: "No registrada"}"
+
+        frecuencia?.let {
+            val index = opcionesFrecuencia.indexOf(it)
+            if (index >= 0) binding.spinnerFrecuencia.setSelection(index)
+        }
+        duracion?.let {
+            val index = opcionesDuracion.indexOf(it)
+            if (index >= 0) binding.spinnerDuracion.setSelection(index)
+        }
+    }
+
+    private fun guardarConfiguracionBuzzer() {
+        val frecSeleccionada = binding.spinnerFrecuencia.selectedItem.toString()
+        val durSeleccionada = binding.spinnerDuracion.selectedItem.toString()
+
+        if (binding.spinnerFrecuencia.selectedItemPosition == 0 || binding.spinnerDuracion.selectedItemPosition == 0) {
+            Toast.makeText(requireContext(), "Por favor selecciona una frecuencia y una duración válidas", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putString("buzzer_frecuencia", frecSeleccionada)
+            putString("buzzer_duracion", durSeleccionada)
+            apply()
+        }
+
+        // tarjeta con datos guardados
+        binding.tvDisplayFrecuencia.text = "Frecuencia: $frecSeleccionada"
+        binding.tvDisplayDuracion.text = "Duración: $durSeleccionada"
+
+        Toast.makeText(requireContext(), "Configuración guardada exitosamente", Toast.LENGTH_SHORT).show()
+    }
+
     private fun ejecutarSimulacion(duracionMs: Int) {
-        // Tono audible
         toneGenerator?.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, duracionMs)
 
-        // Vibración
         val context = context ?: return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager

@@ -1,10 +1,10 @@
 package com.example.bikelight.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import android.widget.Toast
@@ -13,15 +13,13 @@ import com.example.bikelight.R
 import com.example.bikelight.databinding.FragmentLedConfigBinding
 
 class LedConfigFragment : Fragment() {
-
     private var _binding: FragmentLedConfigBinding? = null
     private val binding get() = _binding!!
 
-    // patrones LED
     private val opcionesColores = listOf(
         "Seleccione una opción",
         "Clásico (Rojo - Amarillo - Verde)",
-        "Neón (Cian - Megenta - Amarillo)",
+        "Neón (Cian - Magenta - Amarillo)",
         "Emergencia (Azul - Blanco - Rojo)",
         "Flúor (Turquesa - Lima - Blanco)",
         "Arcoíris (Azul - Violeta - Rojo)",
@@ -29,7 +27,6 @@ class LedConfigFragment : Fragment() {
         "Fuego (Rojo - Naranja - Amarillo)"
     )
 
-    // efectos para las luces
     private val opcionesEfectos = listOf(
         "Seleccione una opción",
         "Fijo / Continuo",
@@ -52,65 +49,36 @@ class LedConfigFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        configurarSpinnerColores()
-        configurarSpinnerEfectos()
+        configurarSpinners()
         configurarSeekBar()
         configurarBotonesManuales()
-    }
 
-    private fun configurarSpinnerColores() {
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.item_spinner_buzzer,
-            opcionesColores
-        )
-        binding.spinnerLedColors.adapter = adapter
+        // cargar configuración guardada
+        cargarConfiguracionLed()
 
-        binding.spinnerLedColors.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position > 0) {
-                    val colorSeleccionado = opcionesColores[position]
-                    Toast.makeText(requireContext(), "Patrón: $colorSeleccionado", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        // guardar
+        binding.btnGuardarLed.setOnClickListener {
+            guardarConfiguracionLed()
         }
     }
 
-    private fun configurarSpinnerEfectos() {
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.item_spinner_buzzer,
-            opcionesEfectos
-        )
-        binding.spinnerEffectColors.adapter = adapter
+    private fun configurarSpinners() {
+        val adapterColor = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesColores)
+        val adapterEfecto = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesEfectos)
 
-        binding.spinnerEffectColors.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (position > 0) {
-                    val efectoSeleccionado = opcionesEfectos[position]
-                    Toast.makeText(requireContext(), "Efecto: $efectoSeleccionado", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
+        binding.spinnerLedColors.adapter = adapterColor
+        binding.spinnerEffectColors.adapter = adapterEfecto
     }
 
     private fun configurarSeekBar() {
         binding.seekBarBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                // Lógica de regulación en tiempo real (Bluetooth / MQTT)
+                binding.tvValorBrilloActual.text = "$progress%"
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                seekBar?.let {
-                    Toast.makeText(requireContext(), "Brillo: ${it.progress}%", Toast.LENGTH_SHORT).show()
-                }
-            }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
 
@@ -122,6 +90,58 @@ class LedConfigFragment : Fragment() {
         binding.btnDesactivarLed.setOnClickListener {
             Toast.makeText(requireContext(), "LEDs apagados", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun cargarConfiguracionLed() {
+        val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
+        val colorGuardado = prefs.getString("led_color", null)
+        val efectoGuardado = prefs.getString("led_efecto", null)
+        val brilloGuardado = prefs.getInt("led_brillo", -1)
+
+        binding.tvDisplayColor.text = "Patrón de Color: ${colorGuardado ?: "No registrado"}"
+        binding.tvDisplayEfecto.text = "Efecto: ${efectoGuardado ?: "No registrado"}"
+        binding.tvDisplayBrillo.text = if (brilloGuardado != -1) "Nivel de Brillo: $brilloGuardado%" else "Nivel de Brillo: No registrado"
+
+        colorGuardado?.let {
+            val index = opcionesColores.indexOf(it)
+            if (index >= 0) binding.spinnerLedColors.setSelection(index)
+        }
+
+        efectoGuardado?.let {
+            val index = opcionesEfectos.indexOf(it)
+            if (index >= 0) binding.spinnerEffectColors.setSelection(index)
+        }
+
+        if (brilloGuardado != -1) {
+            binding.seekBarBrightness.progress = brilloGuardado
+            binding.tvValorBrilloActual.text = "$brilloGuardado%"
+        }
+    }
+
+    private fun guardarConfiguracionLed() {
+        val colorSeleccionado = binding.spinnerLedColors.selectedItem.toString()
+        val efectoSeleccionado = binding.spinnerEffectColors.selectedItem.toString()
+        val brilloSeleccionado = binding.seekBarBrightness.progress
+
+        if (binding.spinnerLedColors.selectedItemPosition == 0 || binding.spinnerEffectColors.selectedItemPosition == 0) {
+            Toast.makeText(requireContext(), "Por favor selecciona un patrón de color y un efecto válidos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
+        prefs.edit().apply {
+            putString("led_color", colorSeleccionado)
+            putString("led_efecto", efectoSeleccionado)
+            putInt("led_brillo", brilloSeleccionado)
+            apply()
+        }
+
+        // actualizar card
+        binding.tvDisplayColor.text = "Patrón de Color: $colorSeleccionado"
+        binding.tvDisplayEfecto.text = "Efecto: $efectoSeleccionado"
+        binding.tvDisplayBrillo.text = "Nivel de Brillo: $brilloSeleccionado%"
+
+        Toast.makeText(requireContext(), "Configuración de LEDs guardada exitosamente", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
