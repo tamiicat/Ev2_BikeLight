@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.bikelight.MainActivity
+import com.example.bikelight.ui.settings.PreferenciasFragment
 import com.example.bikelight.databinding.FragmentHomeDashboardBinding
 
 class HomeDashboardFragment : Fragment() {
@@ -54,7 +55,7 @@ class HomeDashboardFragment : Fragment() {
         }
 
         binding.cardPreferencias.setOnClickListener {
-            Toast.makeText(requireContext(), "Preferencias", Toast.LENGTH_SHORT).show()
+            mainActivity?.cargarFragment(PreferenciasFragment(), "Preferencias")
         }
     }
 

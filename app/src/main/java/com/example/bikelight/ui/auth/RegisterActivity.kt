@@ -2,13 +2,12 @@ package com.example.bikelight.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.bikelight.data.local.AppDatabase
 import com.example.bikelight.data.local.UserProfile
-import com.example.bikelight.databinding.ActivityAutenticacionBinding
+import com.example.bikelight.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -17,25 +16,18 @@ import kotlinx.coroutines.withContext
 
 class RegisterActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAutenticacionBinding
+    private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth: FirebaseAuth
     private val dbRef = FirebaseDatabase.getInstance().reference
     private lateinit var localDb: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityAutenticacionBinding.inflate(layoutInflater)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
         localDb = AppDatabase.getDatabase(this)
-
-        // Configuración visual para registro
-        binding.tilFullName.visibility = View.VISIBLE
-        binding.tilUsername.visibility = View.VISIBLE
-        binding.tilPhone.visibility = View.VISIBLE
-        binding.btnAction.text = "Registrarse"
-        binding.tvSwitchMode.text = "¿Ya tienes cuenta? Inicia sesión"
 
         // Botón para registrarse
         binding.btnAction.setOnClickListener {
@@ -74,7 +66,7 @@ class RegisterActivity : AppCompatActivity() {
             registrarUsuario(email, pass, fullName, username, phone)
         }
 
-        // volver a login
+        // Volver a login
         binding.tvSwitchMode.setOnClickListener {
             finish()
         }
@@ -99,10 +91,10 @@ class RegisterActivity : AppCompatActivity() {
                     phone = phone
                 )
 
-                // guardar5 en Firebase Realtime Database
+                // Guardar en Firebase Realtime Database
                 dbRef.child("users").child(uid).setValue(user).addOnCompleteListener { syncTask ->
                     if (syncTask.isSuccessful) {
-                        // guardar en Room - SQLite local
+                        // Guardar en Room - SQLite local
                         lifecycleScope.launch(Dispatchers.IO) {
                             localDb.userDao().saveUserProfile(user)
                             withContext(Dispatchers.Main) {
