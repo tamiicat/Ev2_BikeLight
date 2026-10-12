@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.bikelight.MainActivity
 import com.example.bikelight.databinding.FragmentPreferenciasBinding
+import com.example.bikelight.ui.settings.AhorroEnergiaFragment
+import com.example.bikelight.ui.settings.BorrarCacheFragment
 
 class PreferenciasFragment : Fragment() {
 
@@ -39,17 +41,17 @@ class PreferenciasFragment : Fragment() {
 
         // modo ahorro energia
         binding.cardAhorroEnergia.setOnClickListener {
-            mostrarDialogoAhorroEnergia()
+            (activity as? MainActivity)?.cargarFragment(AhorroEnergiaFragment(), "Ahorro de Energía")
+        }
+
+        // borrar caché
+        binding.cardBorrarCache.setOnClickListener {
+            (activity as? MainActivity)?.cargarFragment(BorrarCacheFragment(), "Borrado de Caché")
         }
 
         // configuración msj SOS
         binding.cardConfigMensajeSos.setOnClickListener {
             mostrarDialogoMensajeSos()
-        }
-
-        // borrar caché
-        binding.cardBorrarCache.setOnClickListener {
-            confirmarBorradoCache()
         }
     }
 
