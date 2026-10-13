@@ -1,4 +1,4 @@
-package com.tuapp.utils // Asegúrate de colocar el paquete correcto de tu proyecto
+package com.example.bikelight.security
 
 import android.util.Base64
 import java.nio.ByteBuffer
@@ -20,7 +20,6 @@ object CryptoUtils {
     }
 
     // cifra un texto plano y devuelve un String en Base64 listo para Firebase.
-
     fun encrypt(plainText: String?): String {
         if (plainText.isNullOrEmpty()) return ""
 
