@@ -50,7 +50,7 @@
                         android:id="@+id/tvDisplayColor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Patrón de Color: No registrado"
+                        android:text="Colores: No registrado"
                         android:textColor="@color/white"
                         android:textSize="15sp"
                         android:layout_marginBottom="6dp" />
