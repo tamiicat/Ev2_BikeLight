@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bikelight.databinding.ActivityResetPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
 class ResetPasswordActivity : AppCompatActivity() {
 
@@ -55,8 +56,14 @@ class ResetPasswordActivity : AppCompatActivity() {
                 ).show()
                 finish()
             } else {
-                val errorMsg = task.exception?.localizedMessage ?: "No se pudo enviar el correo"
-                Toast.makeText(this, "Error: $errorMsg", Toast.LENGTH_LONG).show()
+                val exception = task.exception
+                if (exception is FirebaseAuthInvalidUserException) {
+                    binding.etResetEmail.error = "Este correo no está registrado en BikeLight"
+                    binding.etResetEmail.requestFocus()
+                } else {
+                    val errorMsg = exception?.localizedMessage ?: "No se pudo enviar el correo"
+                    Toast.makeText(this, "Error: $errorMsg", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }

@@ -80,7 +80,15 @@ class RegisterActivity : AppCompatActivity() {
     ) {
         auth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                val uid = auth.currentUser?.uid ?: return@addOnCompleteListener
+                val firebaseUser = auth.currentUser ?: return@addOnCompleteListener
+                val uid = firebaseUser.uid
+
+                // enviar correo de bienvenida
+                firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
+                    if (emailTask.isSuccessful) {
+                        // Correo enviado con éxito
+                    }
+                }
 
                 val user = UserProfile(
                     uid = uid,
@@ -93,7 +101,6 @@ class RegisterActivity : AppCompatActivity() {
                 // guardar en realtime database
                 dbRef.child("users").child(uid).setValue(user).addOnCompleteListener { syncTask ->
                     if (syncTask.isSuccessful) {
-                        // Guardar en Room - SQLite local
                         lifecycleScope.launch(Dispatchers.IO) {
                             localDb.userDao().saveUserProfile(user)
                             withContext(Dispatchers.Main) {
@@ -101,8 +108,8 @@ class RegisterActivity : AppCompatActivity() {
 
                                 Toast.makeText(
                                     this@RegisterActivity,
-                                    "¡Cuenta creada exitosamente!",
-                                    Toast.LENGTH_SHORT
+                                    "¡Cuenta creada! Hemos enviado un correo a $email para confirmar tu cuenta.",
+                                    Toast.LENGTH_LONG
                                 ).show()
 
                                 irAAuth()
