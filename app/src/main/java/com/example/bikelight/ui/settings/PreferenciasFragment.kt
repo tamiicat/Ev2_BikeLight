@@ -38,16 +38,6 @@ class PreferenciasFragment : Fragment() {
             mainActivity?.cargarFragment(UnidadesMedidaFragment(), "Unidades de Medida")
         }
 
-        // ahorro de energía
-        binding.cardAhorroEnergia.setOnClickListener {
-            mainActivity?.cargarFragment(AhorroEnergiaFragment(), "Ahorro de Energía")
-        }
-
-        // borrar caché
-        binding.cardBorrarCache.setOnClickListener {
-            mainActivity?.cargarFragment(BorrarCacheFragment(), "Borrado de Caché")
-        }
-
         // contacto de emergencia
         binding.cardConfigContacto.setOnClickListener {
             mainActivity?.cargarFragment(EmergencyContactFragment(), "Contacto de Emergencia")

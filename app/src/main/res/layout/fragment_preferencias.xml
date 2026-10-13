@@ -7,20 +7,21 @@
     android:fillViewport="true"
     android:background="@color/bikelight_bg">
 
-    <GridLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:alignmentMode="alignMargins"
-        android:columnOrderPreserved="false">
+        android:orientation="vertical"
+        android:layout_margin="12dp">
 
+        <!-- tema aplicación -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardTemaApp"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_columnWeight="1"
-            android:layout_margin="12dp"
-            app:cardCornerRadius="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
             app:cardBackgroundColor="@color/bikelight_card">
 
             <TextView
@@ -28,19 +29,20 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="Tema\nAplicación"
+                android:text="Tema Aplicación"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- unidades de Medida -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardUnidadesMedida"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_columnWeight="1"
-            android:layout_margin="12dp"
-            app:cardCornerRadius="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
             app:cardBackgroundColor="@color/bikelight_card">
 
             <TextView
@@ -48,59 +50,20 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="Unidades de\nMedida"
+                android:text="Unidades de Medida"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardAhorroEnergia"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_columnWeight="1"
-            android:layout_margin="12dp"
-            app:cardCornerRadius="14dp"
-            app:cardBackgroundColor="@color/bikelight_card">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Modo Ahorro\nEnergía"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardBorrarCache"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_columnWeight="1"
-            android:layout_margin="12dp"
-            app:cardCornerRadius="14dp"
-            app:cardBackgroundColor="@color/bikelight_card">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Borrar\nCaché"
-                android:textColor="@color/white"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-        </com.google.android.material.card.MaterialCardView>
-
+        <!-- contacto de emergencia -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardConfigContacto"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_columnWeight="1"
-            android:layout_margin="12dp"
-            app:cardCornerRadius="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
             app:cardBackgroundColor="@color/bikelight_sos">
 
             <TextView
@@ -108,19 +71,20 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="Contacto de\nEmergencia"
+                android:text="Contacto de Emergencia"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- mensaje SOS -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardConfigMensajeSos"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_columnWeight="1"
-            android:layout_margin="12dp"
-            app:cardCornerRadius="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
             app:cardBackgroundColor="@color/bikelight_sos">
 
             <TextView
@@ -128,10 +92,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="Mensaje\nSOS"
+                android:text="Mensaje SOS"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
         </com.google.android.material.card.MaterialCardView>
-    </GridLayout>
+    </LinearLayout>
 </ScrollView>

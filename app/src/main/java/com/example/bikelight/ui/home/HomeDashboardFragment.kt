@@ -17,6 +17,7 @@ import com.example.bikelight.data.local.AppDatabase
 import com.example.bikelight.data.local.UserProfile
 import com.example.bikelight.databinding.FragmentHomeDashboardBinding
 import com.example.bikelight.security.CryptoUtils
+import com.example.bikelight.ui.devices.SimuladorProximidadFragment
 import com.example.bikelight.ui.settings.PreferenciasFragment
 import com.example.bikelight.ui.settings.SosSender
 import com.google.firebase.auth.FirebaseAuth
@@ -63,6 +64,10 @@ class HomeDashboardFragment : Fragment() {
         val mainActivity = activity as? MainActivity
 
         cargarDatosUsuario()
+
+        binding.cardSimuladorProximidad.setOnClickListener {
+            mainActivity?.cargarFragment(SimuladorProximidadFragment(), "Proximidad del Sensor")
+        }
 
         binding.cardEstadoWifi.setOnClickListener {
             mainActivity?.cargarFragment(EstadoWifiFragment(), "Estado WiFi")
