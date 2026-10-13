@@ -18,17 +18,19 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="70dp"
+            android:layout_marginLeft="10dp"
             app:srcCompat="@drawable/bici" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BikeLight"
-            android:textSize="28sp"
+            android:text="Crear Cuenta"
+            android:layout_marginTop="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/bikelight_primary"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="8dp" />
 
         <!-- registro -->
         <com.google.android.material.textfield.TextInputLayout

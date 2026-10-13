@@ -6,15 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.fragment.app.activityViewModels
 import com.example.bikelight.R
 import com.example.bikelight.databinding.FragmentEstadoWifiBinding
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class EstadoWifiFragment : Fragment() {
     private var _binding: FragmentEstadoWifiBinding? = null
     private val binding get() = _binding!!
+
+    // viewmodel compartido
+    private val wifiViewModel: WifiConnectionViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,32 +28,39 @@ class EstadoWifiFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.ivWifiIcon.setImageResource(R.drawable.wifi)
 
-        // simulación de estados
-        simularEstadosWifi()
-
-        // tocar la imagen/pantalla para reiniciar la simulación
-        binding.ivWifiIcon.setOnClickListener {
-            simularEstadosWifi()
-        }
+        observarEstadoWifi()
     }
 
-    private fun simularEstadosWifi() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            // estado inicial (buscando...)
-            binding.tvWifiStatusDetail.text = "Buscando dispositivo..."
-            binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#FFA500"))
-            binding.ivWifiIcon.alpha = 0.5f // efecto visual atenuado
-
-            delay(2500) // simulación 2.5 segundos de espera
-
-            // estado conectado con el dispositivo
-            binding.tvWifiStatusDetail.text = "Conectado al dispositivo"
-            binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#2E7D32"))
-            binding.ivWifiIcon.alpha = 1.0f
-            // imagen para cuando está conectado
-            binding.ivWifiIcon.setImageResource(R.drawable.wifi_conectado)
+    // estado wifi
+    private fun observarEstadoWifi() {
+        wifiViewModel.wifiStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                is WifiStatus.Disconnected -> {
+                    binding.tvWifiStatusDetail.text = "Desconectado"
+                    binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#D32F2F"))
+                    binding.ivWifiIcon.alpha = 0.5f
+                    binding.ivWifiIcon.setImageResource(R.drawable.wifi_desconectado)
+                }
+                is WifiStatus.Connecting -> {
+                    binding.tvWifiStatusDetail.text = "Conectando al ESP32..."
+                    binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#FFA500"))
+                    binding.ivWifiIcon.alpha = 0.6f
+                    binding.ivWifiIcon.setImageResource(R.drawable.wifi)
+                }
+                is WifiStatus.Connected -> {
+                    binding.tvWifiStatusDetail.text = "Conectado a ${status.ssid}"
+                    binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#2E7D32"))
+                    binding.ivWifiIcon.alpha = 1.0f
+                    binding.ivWifiIcon.setImageResource(R.drawable.wifi_conectado)
+                }
+                is WifiStatus.Error -> {
+                    binding.tvWifiStatusDetail.text = status.message
+                    binding.tvWifiStatusDetail.setTextColor(Color.parseColor("#D32F2F"))
+                    binding.ivWifiIcon.alpha = 0.4f
+                    binding.ivWifiIcon.setImageResource(R.drawable.wifi_error)
+                }
+            }
         }
     }
 

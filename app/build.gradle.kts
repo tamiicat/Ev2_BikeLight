@@ -74,6 +74,9 @@ dependencies {
     // ejecutar tareas asíncrocinas ligadas al ciclo de vida
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 
+    // CONEXIÓN WIFI
+    implementation("androidx.fragment:fragment-ktx:1.8.4")
+
     // PRUEBAS Y TESTING
     // framework estándar para ejecutar pruebas unitarias locales
     testImplementation(libs.junit)

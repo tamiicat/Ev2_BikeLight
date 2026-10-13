@@ -17,20 +17,22 @@
             android:id="@+id/imgLogo"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginLeft="10dp"
             app:srcCompat="@drawable/bici" />
 
+        <!-- email y password -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="BikeLight"
-            android:textSize="28sp"
-            android:textStyle="bold"
+            android:layout_marginBottom="15dp"
+            android:text="Inicio de Sesión"
+            android:layout_marginTop="10sp"
             android:textColor="@color/bikelight_primary"
-            android:layout_marginBottom="24dp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-        <!-- email y password -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilEmail"
             android:layout_width="match_parent"

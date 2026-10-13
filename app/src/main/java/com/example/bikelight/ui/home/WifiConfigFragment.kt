@@ -22,11 +22,16 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.example.bikelight.databinding.FragmentWifiConfigBinding
 
 class WifiConfigFragment : Fragment() {
+
     private var _binding: FragmentWifiConfigBinding? = null
     private val binding get() = _binding!!
+
+    // viewmodel compartido
+    private val wifiViewModel: WifiConnectionViewModel by activityViewModels()
 
     private var connectivityManager: ConnectivityManager? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
@@ -157,6 +162,9 @@ class WifiConfigFragment : Fragment() {
             binding.progressBar.visibility = View.VISIBLE
             binding.btnConnectDevice.isEnabled = false
 
+            // estado a viewmodel
+            wifiViewModel.updateStatus(WifiStatus.Connecting)
+
             unregisterNetworkCallback()
 
             val specifierBuilder = WifiNetworkSpecifier.Builder().setSsid(ssid)
@@ -173,7 +181,10 @@ class WifiConfigFragment : Fragment() {
             networkCallback = object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
+                    // enrutar el tráfico local hacia el ESP32
                     connectivityManager?.bindProcessToNetwork(network)
+                    wifiViewModel.updateStatus(WifiStatus.Connected(ssid))
+
                     activity?.runOnUiThread {
                         _binding?.progressBar?.visibility = View.GONE
                         _binding?.btnConnectDevice?.isEnabled = true
@@ -183,6 +194,8 @@ class WifiConfigFragment : Fragment() {
 
                 override fun onUnavailable() {
                     super.onUnavailable()
+                    wifiViewModel.updateStatus(WifiStatus.Error("Conexión rechazada o no encontrada"))
+
                     activity?.runOnUiThread {
                         _binding?.progressBar?.visibility = View.GONE
                         _binding?.btnConnectDevice?.isEnabled = true
@@ -192,6 +205,9 @@ class WifiConfigFragment : Fragment() {
 
                 override fun onLost(network: Network) {
                     super.onLost(network)
+                    connectivityManager?.bindProcessToNetwork(null)
+                    wifiViewModel.updateStatus(WifiStatus.Disconnected)
+
                     activity?.runOnUiThread {
                         Toast.makeText(requireContext(), "Conexión con el ESP32 finalizada", Toast.LENGTH_SHORT).show()
                     }
@@ -219,8 +235,7 @@ class WifiConfigFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        unregisterNetworkCallback()
-        connectivityManager?.bindProcessToNetwork(null)
+        // sin desvincular la red para que permanezca conectada mientras se navega el estado wifi
         _binding = null
     }
 }
