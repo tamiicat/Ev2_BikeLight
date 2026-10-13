@@ -99,7 +99,7 @@
                 android:id="@+id/etBikeTipo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ej. Montaña, Ruta, Urbana"
+                android:hint="Ej. Montaña, Ruta, Urbana, Eléctrica, BMX"
                 android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -115,7 +115,7 @@
                 android:id="@+id/etBikeMarca"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ej. Trek, Giant, Specialized"
+                android:hint="Ej. Trek, Giant, Specialized, Bianchi, Oxford"
                 android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -124,14 +124,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:hint="Marca"
+            android:hint="Modelo"
             app:expandedHintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etBikeModelo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ej. Marlin 7"
+                android:hint="Ej. Marlin 7, Trail 5, Aspect 920, Onna 20"
                 android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -147,7 +147,7 @@
                 android:id="@+id/etBikeAno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ej. 2024"
+                android:hint="Ej. 2019"
                 android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
