@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.bikelight.data.local.AppDatabase
 import com.example.bikelight.data.local.UserProfile
 import com.example.bikelight.databinding.FragmentEmergencyContactBinding
+import com.example.bikelight.security.CryptoUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -56,17 +57,24 @@ class EmergencyContactFragment : Fragment() {
                 user?.let { pintarFichaYCampos(it) }
             }
 
-            // Sincronizar datos desde Firebase Realtime Database
+            // sincronizar desde realtime database
             FirebaseDatabase.getInstance().reference.child("users").child(uid).get()
                 .addOnSuccessListener { snapshot ->
                     try {
                         val userFirebase = snapshot.getValue(UserProfile::class.java)
                         userFirebase?.let { profile ->
+                            // DESCIFRADO: Convertir los datos cifrados de Firebase a texto legible
+                            val profileDescifrado = profile.copy(
+                                emergencyContactName = CryptoUtils.decrypt(profile.emergencyContactName),
+                                emergencyContactPhone = CryptoUtils.decrypt(profile.emergencyContactPhone),
+                                emergencyContactEmail = CryptoUtils.decrypt(profile.emergencyContactEmail)
+                            )
+
                             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                                pintarFichaYCampos(profile)
+                                pintarFichaYCampos(profileDescifrado)
                             }
                             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                                db.userDao().saveUserProfile(profile)
+                                db.userDao().saveUserProfile(profileDescifrado)
                             }
                         }
                     } catch (e: Exception) {
@@ -81,12 +89,10 @@ class EmergencyContactFragment : Fragment() {
     private fun pintarFichaYCampos(user: UserProfile) {
         if (_binding == null) return
 
-        // Actualizar tarjeta superior
         binding.tvDisplayContactName.text = "Nombre: ${valorOValorPorDefecto(user.emergencyContactName, "No registrado")}"
         binding.tvDisplayContactPhone.text = "Teléfono: ${valorOValorPorDefecto(user.emergencyContactPhone, "No registrado")}"
         binding.tvDisplayContactEmail.text = "Correo: ${valorOValorPorDefecto(user.emergencyContactEmail, "No registrado")}"
 
-        // Rellenar campos del formulario
         binding.etEmergencyContactName.setText(user.emergencyContactName ?: "")
         binding.etEmergencyContactPhone.setText(user.emergencyContactPhone ?: "")
         binding.etEmergencyContactEmail.setText(user.emergencyContactEmail ?: "")
@@ -118,18 +124,19 @@ class EmergencyContactFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val db = AppDatabase.getDatabase(safeContext)
 
-            // Actualización local directa en Room usando UserDao
+            // guardar en local (Room) en texto plano
             db.userDao().updateEmergencyContact(uid, name, phone, email)
 
-            // Actualización en Firebase Realtime Database
-            val contactMap: Map<String, Any?> = mapOf(
-                "emergencyContactName" to name,
-                "emergencyContactPhone" to phone,
-                "emergencyContactEmail" to email
+            // datos a cifrar
+            val contactMapCifrado: Map<String, Any?> = mapOf(
+                "emergencyContactName" to CryptoUtils.encrypt(name),
+                "emergencyContactPhone" to CryptoUtils.encrypt(phone),
+                "emergencyContactEmail" to CryptoUtils.encrypt(email)
             )
 
+            // enviar a Firebase
             FirebaseDatabase.getInstance().reference.child("users").child(uid)
-                .updateChildren(contactMap)
+                .updateChildren(contactMapCifrado)
                 .addOnSuccessListener {
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         if (_binding != null) {
@@ -142,7 +149,7 @@ class EmergencyContactFragment : Fragment() {
                 }
                 .addOnFailureListener {
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        Toast.makeText(safeContext, "Error al guardar en el servidor", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(safeContext, "Error al sincronizar con el servidor", Toast.LENGTH_SHORT).show()
                     }
                 }
         }

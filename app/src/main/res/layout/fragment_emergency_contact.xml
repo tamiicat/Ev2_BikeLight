@@ -92,8 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ej. Alonso Díaz"
-                android:inputType="textCapWords"
-                android:textColor="@color/bikelight_sos_dark" />
+                android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- teléfono contacto -->
@@ -115,8 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ej. +56912345678"
-                android:inputType="textCapWords"
-                android:textColor="@color/bikelight_sos_dark" />
+                android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- correo electrónico -->
@@ -138,8 +136,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ej. contacto@gmail.com"
-                android:inputType="textCapWords"
-                android:textColor="@color/bikelight_sos_dark" />
+                android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- botón -->

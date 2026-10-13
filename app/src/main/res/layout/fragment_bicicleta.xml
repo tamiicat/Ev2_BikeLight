@@ -163,7 +163,7 @@
                 android:id="@+id/etBikeColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ej. 2024"
+                android:hint="Ej. Azul"
                 android:inputType="textCapWords" />
         </com.google.android.material.textfield.TextInputLayout>
 

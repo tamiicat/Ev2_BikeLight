@@ -1,9 +1,11 @@
 package com.example.bikelight.ui.auth
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.bikelight.R
 import com.example.bikelight.databinding.ActivityResetPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -17,6 +19,16 @@ class ResetPasswordActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val ModoOscuro = (resources.configuration.uiMode and
+                Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
+
+        if (ModoOscuro) {
+            binding.imgLogoReset.setImageResource(R.drawable.bici_oscuro)
+        } else {
+            binding.imgLogoReset.setImageResource(R.drawable.bici)
+        }
 
         auth = FirebaseAuth.getInstance()
 

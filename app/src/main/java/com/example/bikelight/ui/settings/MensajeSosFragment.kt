@@ -10,9 +10,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.bikelight.databinding.FragmentMensajeSosBinding
+import com.example.bikelight.security.CryptoUtils
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class MensajeSosFragment : Fragment() {
-
     private var _binding: FragmentMensajeSosBinding? = null
     private val binding get() = _binding!!
 
@@ -30,7 +32,7 @@ class MensajeSosFragment : Fragment() {
 
         cargarConfiguracion()
 
-        // vista de msj en tiempo real
+        // ver msj en tiempo real
         binding.etMensajeSos.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -71,6 +73,22 @@ class MensajeSosFragment : Fragment() {
         binding.switchIncluirBici.isChecked = incluirBici
 
         actualizarVistaPrevia()
+
+        // sincronizar desde firebase
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseDatabase.getInstance().reference.child("users").child(uid).child("sosMessage").get()
+            .addOnSuccessListener { snapshot ->
+                val cifradoRemoto = snapshot.getValue(String::class.java)
+                if (!cifradoRemoto.isNullOrBlank()) {
+                    val descifrado = CryptoUtils.decrypt(cifradoRemoto)
+                    if (_binding != null && descifrado.isNotBlank()) {
+                        binding.etMensajeSos.setText(descifrado)
+                        actualizarVistaPrevia()
+                        // actualizar local
+                        prefs.edit().putString("sos_mensaje_texto", descifrado).apply()
+                    }
+                }
+            }
     }
 
     private fun actualizarVistaPrevia() {
@@ -93,12 +111,23 @@ class MensajeSosFragment : Fragment() {
         val incluirGps = binding.switchIncluirUbicacion.isChecked
         val incluirBici = binding.switchIncluirBici.isChecked
 
+        // guardado local
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         prefs.edit().apply {
             putString("sos_mensaje_texto", mensajeFinal)
             putBoolean("sos_incluir_gps", incluirGps)
             putBoolean("sos_incluir_bici", incluirBici)
             apply()
+        }
+
+        // respaldo cifrado en firebase
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+        if (uid != null) {
+            val dataCifrada = mapOf(
+                "sosMessage" to CryptoUtils.encrypt(mensajeFinal)
+            )
+            FirebaseDatabase.getInstance().reference.child("users").child(uid)
+                .updateChildren(dataCifrada)
         }
 
         Toast.makeText(requireContext(), "Configuración SOS guardada correctamente", Toast.LENGTH_SHORT).show()

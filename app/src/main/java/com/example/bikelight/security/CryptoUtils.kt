@@ -11,7 +11,7 @@ object CryptoUtils {
     private const val ALGORITHM = "AES"
     private const val TRANSFORMATION = "AES/GCM/NoPadding"
     private const val TAG_LENGTH_BIT = 128 // longitud de autenticación de GCM
-    private const val IV_LENGTH_BYTE = 12  // longitud recomendada para el IV en GCM
+    private const val IV_LENGTH_BYTE = 12  // longitud IV en GCM
     // 32 caracteres = AES-256
     private const val SECRET_KEY_STRING = "MiClaveSecretaSuperSegura32Bytes"
 

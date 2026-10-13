@@ -10,12 +10,14 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.bikelight.data.local.AppDatabase
+import com.example.bikelight.security.CryptoUtils
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 object SosSender {
-
     suspend fun dispararAlertaSos(context: Context) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val prefs = context.getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
@@ -31,7 +33,23 @@ object SosSender {
         if (uid != null) {
             val db = AppDatabase.getDatabase(context)
             val user = db.userDao().getUserProfile(uid)
-            telefonoContacto = user?.emergencyContactPhone ?: ""
+
+            if (user != null && !user.emergencyContactPhone.isNullOrBlank()) {
+                // si numero está cifrado, se descrifra
+                telefonoContacto = CryptoUtils.decrypt(user.emergencyContactPhone)
+            } else {
+                // si no está en Room, leer directamente de firebase
+                try {
+                    val snapshot = FirebaseDatabase.getInstance().reference
+                        .child("users").child(uid).child("emergencyContactPhone").get().await()
+                    val telCifrado = snapshot.getValue(String::class.java)
+                    if (!telCifrado.isNullOrBlank()) {
+                        telefonoContacto = CryptoUtils.decrypt(telCifrado)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
 
             if (user != null && incluirBici) {
                 datosBiciTexto = "\n[Bicicleta: ${user.bikeTipo} ${user.bikeMarca} ${user.bikeModelo} - Color: ${user.bikeColor}]"
@@ -50,7 +68,7 @@ object SosSender {
                 builder.append(datosBiciTexto)
             }
 
-            // obtener gps
+            // obtener coordenadas GPS
             if (incluirGps) {
                 val ubicacionActual = obtenerCoordenadasReales(context)
                 if (ubicacionActual != null) {
@@ -88,17 +106,14 @@ object SosSender {
 
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return null
 
-        // gps máxima precisión
         val gpsLocation = if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         } else null
 
-        // red máxima precisión
         val networkLocation = if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         } else null
 
-        // retornar ubicación
         return when {
             gpsLocation != null && networkLocation != null -> {
                 if (gpsLocation.time > networkLocation.time) gpsLocation else networkLocation

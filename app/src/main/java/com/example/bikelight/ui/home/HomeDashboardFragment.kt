@@ -13,14 +13,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.bikelight.MainActivity
+import com.example.bikelight.data.local.AppDatabase
+import com.example.bikelight.data.local.UserProfile
 import com.example.bikelight.databinding.FragmentHomeDashboardBinding
+import com.example.bikelight.security.CryptoUtils
 import com.example.bikelight.ui.settings.PreferenciasFragment
 import com.example.bikelight.ui.settings.SosSender
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeDashboardFragment : Fragment() {
-    // solicitar permisos de ubicación
+
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -55,6 +61,8 @@ class HomeDashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mainActivity = activity as? MainActivity
+
+        cargarDatosUsuario()
 
         binding.cardEstadoWifi.setOnClickListener {
             mainActivity?.cargarFragment(EstadoWifiFragment(), "Estado WiFi")
@@ -101,7 +109,6 @@ class HomeDashboardFragment : Fragment() {
                     ) == PackageManager.PERMISSION_GRANTED
 
                     if (!tienePermisoFine && !tienePermisoCoarse) {
-                        // solicita permiso antes de enviar
                         locationPermissionLauncher.launch(
                             arrayOf(
                                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -109,7 +116,6 @@ class HomeDashboardFragment : Fragment() {
                             )
                         )
                     } else {
-                        // enviar msj
                         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                             SosSender.dispararAlertaSos(requireContext())
                         }
@@ -117,6 +123,36 @@ class HomeDashboardFragment : Fragment() {
                 }
                 .setNegativeButton("Cancelar", null)
                 .show()
+        }
+    }
+
+    private fun cargarDatosUsuario() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val contextSafe = context ?: return
+
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            val db = AppDatabase.getDatabase(contextSafe)
+            val userLocal = db.userDao().getUserProfile(uid)
+
+            // si no está en local, sincronizar desde Firebase
+            if (userLocal == null) {
+                FirebaseDatabase.getInstance().reference.child("users").child(uid).get()
+                    .addOnSuccessListener { snapshot ->
+                        val userFirebase = snapshot.getValue(UserProfile::class.java)
+                        if (userFirebase != null) {
+                            val userDescifrado = userFirebase.copy(
+                                fullName = CryptoUtils.decrypt(userFirebase.fullName),
+                                phone = CryptoUtils.decrypt(userFirebase.phone),
+                                emergencyContactName = CryptoUtils.decrypt(userFirebase.emergencyContactName),
+                                emergencyContactPhone = CryptoUtils.decrypt(userFirebase.emergencyContactPhone),
+                                emergencyContactEmail = CryptoUtils.decrypt(userFirebase.emergencyContactEmail)
+                            )
+                            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                                db.userDao().saveUserProfile(userDescifrado)
+                            }
+                        }
+                    }
+            }
         }
     }
 

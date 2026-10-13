@@ -2,15 +2,23 @@ package com.example.bikelight.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.bikelight.MainActivity
+import com.example.bikelight.R
+import com.example.bikelight.data.local.AppDatabase
+import com.example.bikelight.data.local.UserProfile
 import com.example.bikelight.databinding.ActivityAutenticacionBinding
+import com.example.bikelight.security.CryptoUtils
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityAutenticacionBinding
     private lateinit var auth: FirebaseAuth
 
@@ -18,6 +26,16 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAutenticacionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val ModoOscuro = (resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        if (ModoOscuro) {
+            binding.imgLogo.setImageResource(R.drawable.bici_oscuro)
+        } else {
+            binding.imgLogo.setImageResource(R.drawable.bici)
+        }
 
         auth = FirebaseAuth.getInstance()
 
@@ -27,7 +45,6 @@ class AuthActivity : AppCompatActivity() {
             return
         }
 
-        // Ocultar campos innecesarios en la vista si reutilizas el layout
         binding.btnAction.text = "Iniciar Sesión"
         binding.tvSwitchMode.text = "¿No tienes cuenta? Regístrate aquí"
 
@@ -65,12 +82,50 @@ class AuthActivity : AppCompatActivity() {
     private fun iniciarSesion(email: String, pass: String) {
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(this, "¡Bienvenidx!", Toast.LENGTH_SHORT).show()
-                irAMain()
+                val uid = auth.currentUser?.uid
+                if (uid != null) {
+                    sincronizarPerfilYContinuar(uid)
+                } else {
+                    irAMain()
+                }
             } else {
                 val errorMsg = task.exception?.localizedMessage ?: "Error de autenticación"
                 Toast.makeText(this, "Error al iniciar sesión: $errorMsg", Toast.LENGTH_LONG).show()
             }
+        }
+    }
+
+    private fun sincronizarPerfilYContinuar(uid: String) {
+        val dbRef = FirebaseDatabase.getInstance().reference.child("users").child(uid)
+
+        dbRef.get().addOnSuccessListener { snapshot ->
+            val userFirebase = snapshot.getValue(UserProfile::class.java)
+            if (userFirebase != null) {
+                // descifrar datos sensibles
+                val userDescifrado = userFirebase.copy(
+                    email = CryptoUtils.decrypt(userFirebase.email),
+                    fullName = CryptoUtils.decrypt(userFirebase.fullName),
+                    phone = CryptoUtils.decrypt(userFirebase.phone),
+                    emergencyContactName = CryptoUtils.decrypt(userFirebase.emergencyContactName),
+                    emergencyContactPhone = CryptoUtils.decrypt(userFirebase.emergencyContactPhone),
+                    emergencyContactEmail = CryptoUtils.decrypt(userFirebase.emergencyContactEmail)
+                )
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val localDb = AppDatabase.getDatabase(applicationContext)
+                    localDb.userDao().saveUserProfile(userDescifrado)
+
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@AuthActivity, "¡Bienvenidx!", Toast.LENGTH_SHORT).show()
+                        irAMain()
+                    }
+                }
+            } else {
+                irAMain()
+            }
+        }.addOnFailureListener { e ->
+            Log.e("AuthActivity", "Error al sincronizar perfil: ${e.message}")
+            irAMain()
         }
     }
 

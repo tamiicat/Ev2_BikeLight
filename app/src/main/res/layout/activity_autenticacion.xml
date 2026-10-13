@@ -54,7 +54,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:hint="Contraseña"
-            app:expandedHintEnabled="false">
+            app:expandedHintEnabled="false"
+            app:endIconMode="password_toggle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"

@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.bikelight.R
 import com.example.bikelight.data.local.AppDatabase
 import com.example.bikelight.data.local.UserProfile
 import com.example.bikelight.databinding.ActivityRegisterBinding
+import com.example.bikelight.security.CryptoUtils
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +26,16 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val ModoOscuro = (resources.configuration.uiMode and
+                android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+                android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        if (ModoOscuro) {
+            binding.imgLogo.setImageResource(R.drawable.bici_oscuro)
+        } else {
+            binding.imgLogo.setImageResource(R.drawable.bici)
+        }
 
         auth = FirebaseAuth.getInstance()
         localDb = AppDatabase.getDatabase(this)
@@ -86,11 +98,12 @@ class RegisterActivity : AppCompatActivity() {
                 // enviar correo de bienvenida
                 firebaseUser.sendEmailVerification().addOnCompleteListener { emailTask ->
                     if (emailTask.isSuccessful) {
-                        // Correo enviado con éxito
+                        // correo enviado
                     }
                 }
 
-                val user = UserProfile(
+                // local en Room (texto plano)
+                val userLocal = UserProfile(
                     uid = uid,
                     email = email,
                     fullName = fullName,
@@ -98,11 +111,20 @@ class RegisterActivity : AppCompatActivity() {
                     phone = phone
                 )
 
+                // datos sensibles cifrados
+                val firebaseUserData = mapOf(
+                    "uid" to uid,
+                    "email" to CryptoUtils.encrypt(email),
+                    "username" to username,
+                    "fullName" to CryptoUtils.encrypt(fullName),
+                    "phone" to CryptoUtils.encrypt(phone)
+                )
+
                 // guardar en realtime database
-                dbRef.child("users").child(uid).setValue(user).addOnCompleteListener { syncTask ->
+                dbRef.child("users").child(uid).updateChildren(firebaseUserData).addOnCompleteListener { syncTask ->
                     if (syncTask.isSuccessful) {
                         lifecycleScope.launch(Dispatchers.IO) {
-                            localDb.userDao().saveUserProfile(user)
+                            localDb.userDao().saveUserProfile(userLocal)
                             withContext(Dispatchers.Main) {
                                 auth.signOut()
 
