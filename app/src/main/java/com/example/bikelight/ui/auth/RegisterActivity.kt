@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class RegisterActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth: FirebaseAuth
     private val dbRef = FirebaseDatabase.getInstance().reference
@@ -29,7 +28,7 @@ class RegisterActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         localDb = AppDatabase.getDatabase(this)
 
-        // Botón para registrarse
+        // registrarse
         binding.btnAction.setOnClickListener {
             val fullName = binding.etFullName.text.toString().trim()
             val username = binding.etUsername.text.toString().trim()
@@ -66,7 +65,7 @@ class RegisterActivity : AppCompatActivity() {
             registrarUsuario(email, pass, fullName, username, phone)
         }
 
-        // Volver a login
+        // volver al login
         binding.tvSwitchMode.setOnClickListener {
             finish()
         }
@@ -91,7 +90,7 @@ class RegisterActivity : AppCompatActivity() {
                     phone = phone
                 )
 
-                // Guardar en Firebase Realtime Database
+                // guardar en realtime database
                 dbRef.child("users").child(uid).setValue(user).addOnCompleteListener { syncTask ->
                     if (syncTask.isSuccessful) {
                         // Guardar en Room - SQLite local

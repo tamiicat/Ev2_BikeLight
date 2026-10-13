@@ -60,16 +60,16 @@ class HomeDashboardFragment : Fragment() {
             mainActivity?.cargarFragment(EstadoWifiFragment(), "Estado WiFi")
         }
 
+        binding.cardConfigWifi.setOnClickListener {
+            mainActivity?.cargarFragment(WifiConfigFragment(), "Configuración Wi-Fi")
+        }
+
         binding.cardBicicleta.setOnClickListener {
             mainActivity?.cargarFragment(BicicletaFragment(), "Mi Bicicleta")
         }
 
         binding.cardModoProximidad.setOnClickListener {
             mainActivity?.cargarFragment(ModoProximidadFragment(), "Modo Proximidad")
-        }
-
-        binding.cardConfigWifi.setOnClickListener {
-            mainActivity?.cargarFragment(WifiConfigFragment(), "Configuración Wi-Fi")
         }
 
         binding.cardConfigBuzzer.setOnClickListener {

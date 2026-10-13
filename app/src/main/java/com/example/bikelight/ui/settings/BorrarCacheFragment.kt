@@ -5,10 +5,12 @@ import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.bikelight.R
 import com.example.bikelight.databinding.FragmentBorrarCacheBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,7 +18,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class BorrarCacheFragment : Fragment() {
-
     private var _binding: FragmentBorrarCacheBinding? = null
     private val binding get() = _binding!!
 
@@ -29,6 +30,8 @@ class BorrarCacheFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.findViewById<TextView>(R.id.tvHeaderTitle)?.text = "Borrar Caché"
 
         calcularTamanoCache()
 
@@ -43,15 +46,22 @@ class BorrarCacheFragment : Fragment() {
 
     private fun calcularTamanoCache() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val cacheInterna = requireContext().cacheDir
-            val cacheExterna = requireContext().externalCacheDir
+            val ctx = context ?: return@launch
+            var totalBytes = 0L
 
-            val bytesInternos = obtenerTamanoCarpeta(cacheInterna)
-            val bytesExternos = cacheExterna?.let { obtenerTamanoCarpeta(it) } ?: 0L
-            val totalBytes = bytesInternos + bytesExternos
+            // caché interna principal
+            totalBytes += obtenerTamanoCarpeta(ctx.cacheDir)
+
+            // caché interna de código
+            totalBytes += obtenerTamanoCarpeta(ctx.codeCacheDir)
+
+            // cachés externas (si existen)
+            ctx.externalCacheDirs?.filterNotNull()?.forEach { dir ->
+                totalBytes += obtenerTamanoCarpeta(dir)
+            }
 
             withContext(Dispatchers.Main) {
-                if (_binding != null) {
+                if (_binding != null && isAdded) {
                     val formatoLegible = Formatter.formatFileSize(requireContext(), totalBytes)
                     binding.tvTamanoCache.text = formatoLegible
                 }
@@ -88,20 +98,30 @@ class BorrarCacheFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             var exito = false
             try {
-                requireContext().cacheDir.deleteRecursively()
-                requireContext().externalCacheDir?.deleteRecursively()
+                val ctx = context ?: return@launch
+
+                // vaciar sin eliminar las carpetas raíz del sistema
+                ctx.cacheDir?.listFiles()?.forEach { it.deleteRecursively() }
+                ctx.codeCacheDir?.listFiles()?.forEach { it.deleteRecursively() }
+
+                ctx.externalCacheDirs?.filterNotNull()?.forEach { dir ->
+                    dir.listFiles()?.forEach { it.deleteRecursively() }
+                }
+
                 exito = true
             } catch (e: Exception) {
                 e.printStackTrace()
             }
 
             withContext(Dispatchers.Main) {
-                if (exito) {
-                    Toast.makeText(requireContext(), "Caché eliminada con éxito", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(requireContext(), "No se pudo limpiar parte de la caché", Toast.LENGTH_SHORT).show()
+                if (isAdded) {
+                    if (exito) {
+                        Toast.makeText(requireContext(), "Caché eliminada con éxito", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "No se pudo limpiar parte de la caché", Toast.LENGTH_SHORT).show()
+                    }
+                    calcularTamanoCache()
                 }
-                calcularTamanoCache()
             }
         }
     }

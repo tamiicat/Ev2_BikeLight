@@ -1,27 +1,54 @@
 package com.example.bikelight.ui.home
 
+import android.Manifest
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.net.wifi.WifiManager
 import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.bikelight.databinding.FragmentWifiConfigBinding
 
 class WifiConfigFragment : Fragment() {
-
     private var _binding: FragmentWifiConfigBinding? = null
     private val binding get() = _binding!!
 
     private var connectivityManager: ConnectivityManager? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private var wifiManager: WifiManager? = null
+
+    private val wifiScanReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) {
+                updateWifiScanList()
+            }
+        }
+    }
+
+    private val requestLocationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            startWifiScan()
+        } else {
+            Toast.makeText(requireContext(), "Se requiere permiso de ubicación para escanear redes Wi-Fi", Toast.LENGTH_LONG).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -34,11 +61,29 @@ class WifiConfigFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        wifiManager = requireContext().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
 
         setupListeners()
     }
 
+    override fun onStart() {
+        super.onStart()
+        val intentFilter = IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
+        requireContext().registerReceiver(wifiScanReceiver, intentFilter)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        try {
+            requireContext().unregisterReceiver(wifiScanReceiver)
+        } catch (_: Exception) {}
+    }
+
     private fun setupListeners() {
+        binding.btnScanWifi.setOnClickListener {
+            checkPermissionsAndScan()
+        }
+
         binding.btnConnectDevice.setOnClickListener {
             val ssid = binding.etDeviceAp.text.toString().trim()
             val pass = binding.etDeviceApPass.text.toString().trim()
@@ -50,6 +95,60 @@ class WifiConfigFragment : Fragment() {
             binding.tilDeviceAp.error = null
 
             connectToEsp32Ap(ssid, pass)
+        }
+    }
+
+    private fun checkPermissionsAndScan() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            startWifiScan()
+        } else {
+            requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun startWifiScan() {
+        binding.scanProgressBar.visibility = View.VISIBLE
+        val success = wifiManager?.startScan() ?: false
+        if (!success) {
+            binding.scanProgressBar.visibility = View.GONE
+            updateWifiScanList()
+        }
+    }
+
+    private fun updateWifiScanList() {
+        _binding?.scanProgressBar?.visibility = View.GONE
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) return
+
+        @Suppress("DEPRECATION")
+        val scanResults = wifiManager?.scanResults ?: emptyList()
+        val ssids = scanResults
+            .map { it.SSID }
+            .filter { it.isNotBlank() }
+            .distinct()
+
+        if (ssids.isEmpty()) {
+            Toast.makeText(requireContext(), "No se encontraron redes o la ubicación está apagada", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        _binding?.let { b ->
+            b.lvWifiList.visibility = View.VISIBLE
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, ssids)
+            b.lvWifiList.adapter = adapter
+            b.lvWifiList.setOnItemClickListener { _, _, position, _ ->
+                val selectedSsid = ssids[position]
+                b.etDeviceAp.setText(selectedSsid)
+                b.tilDeviceAp.error = null
+            }
         }
     }
 

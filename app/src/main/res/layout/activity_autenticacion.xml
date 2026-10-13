@@ -36,7 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:hint="Correo Electrónico">
+            android:hint="Correo Electrónico"
+            app:expandedHintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
@@ -50,8 +51,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:passwordToggleEnabled="true"
-            android:hint="Contraseña">
+            android:hint="Contraseña"
+            app:expandedHintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
@@ -67,6 +68,7 @@
             android:layout_height="56dp"
             app:backgroundTint="@color/bikelight_primary"
             android:textColor="@color/white"
+            app:cornerRadius="12dp"
             android:text="Iniciar Sesión" />
 
         <com.google.android.material.button.MaterialButton

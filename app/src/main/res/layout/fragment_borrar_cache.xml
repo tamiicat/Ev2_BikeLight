@@ -36,7 +36,7 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
-                <!-- cálculo del caché -->
+                <!-- Cálculo del caché -->
                 <TextView
                     android:id="@+id/tvTamanoCache"
                     android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- detalle de lo que se limpiará -->
+        <!-- Detalle de lo que se limpiará -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             android:textStyle="bold"
             android:layout_marginBottom="12dp" />
 
-        <!-- advertencia -->
+        <!-- Advertencia -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,12 +101,12 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- botón -->
+        <!-- Botón -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLimpiarCache"
             android:layout_width="match_parent"
             android:layout_height="54dp"
-            android:text="Liberar Espacio de Caché"
+            android:text="Liberar Espacio"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/white"
