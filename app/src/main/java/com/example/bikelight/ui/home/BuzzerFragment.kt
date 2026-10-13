@@ -1,5 +1,6 @@
 package com.example.bikelight.ui.home
 
+import android.Manifest
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresPermission
 import androidx.fragment.app.Fragment
 import com.example.bikelight.R
 import com.example.bikelight.databinding.FragmentBuzzerConfigBinding
@@ -52,25 +54,25 @@ class BuzzerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // generador de audios
         toneGenerator = ToneGenerator(AudioManager.STREAM_ALARM, 100)
 
-        // configuración
+        // configuración de spinners de frecuencia y duración
         val adapterFrec = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesFrecuencia)
         val adapterDur = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesDuracion)
 
         binding.spinnerFrecuencia.adapter = adapterFrec
         binding.spinnerDuracion.adapter = adapterDur
 
-        // valores guardados
+        // carga los valores guardados
         cargarConfiguracionBuzzer()
 
-        // Guardar configuración
+        // guardar configuración
         binding.btnGuardarBuzzer.setOnClickListener {
             guardarConfiguracionBuzzer()
         }
 
-        // activar
+        // activar simulación de funcionamiento del buzzer
         binding.btnActivar.setOnClickListener {
             val duracionTexto = binding.spinnerDuracion.selectedItem.toString()
             val duracionMs = when {
@@ -87,14 +89,14 @@ class BuzzerFragment : Fragment() {
             Toast.makeText(requireContext(), "Buzzer Activado ($duracionMs ms)", Toast.LENGTH_SHORT).show()
         }
 
-        // desactivar
+        // desactivar simulación
         binding.btnDesactivar.setOnClickListener {
             isSimulando = false
             toneGenerator?.stopTone()
             Toast.makeText(requireContext(), "Buzzer Desactivado", Toast.LENGTH_SHORT).show()
         }
     }
-
+    // lee las preferencias almacenadas
     private fun cargarConfiguracionBuzzer() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         val frecuencia = prefs.getString("buzzer_frecuencia", null)
@@ -102,7 +104,7 @@ class BuzzerFragment : Fragment() {
 
         binding.tvDisplayFrecuencia.text = "Frecuencia: ${frecuencia ?: "No registrada"}"
         binding.tvDisplayDuracion.text = "Duración: ${duracion ?: "No registrada"}"
-
+        // selecciona la opcion guardada en spinners
         frecuencia?.let {
             val index = opcionesFrecuencia.indexOf(it)
             if (index >= 0) binding.spinnerFrecuencia.setSelection(index)
@@ -112,11 +114,12 @@ class BuzzerFragment : Fragment() {
             if (index >= 0) binding.spinnerDuracion.setSelection(index)
         }
     }
-
+    // guarda los valores del buzzer
     private fun guardarConfiguracionBuzzer() {
         val frecSeleccionada = binding.spinnerFrecuencia.selectedItem.toString()
         val durSeleccionada = binding.spinnerDuracion.selectedItem.toString()
 
+        // valida que se seleccione una opción válida
         if (binding.spinnerFrecuencia.selectedItemPosition == 0 || binding.spinnerDuracion.selectedItemPosition == 0) {
             Toast.makeText(requireContext(), "Por favor selecciona una frecuencia y una duración válidas", Toast.LENGTH_SHORT).show()
             return
@@ -129,13 +132,14 @@ class BuzzerFragment : Fragment() {
             apply()
         }
 
-        // tarjeta con datos guardados
+        // actualiza tarjeta con datos guardados
         binding.tvDisplayFrecuencia.text = "Frecuencia: $frecSeleccionada"
         binding.tvDisplayDuracion.text = "Duración: $durSeleccionada"
 
         Toast.makeText(requireContext(), "Configuración guardada exitosamente", Toast.LENGTH_SHORT).show()
     }
-
+    // emite tono acústico
+    @RequiresPermission(Manifest.permission.VIBRATE)
     private fun ejecutarSimulacion(duracionMs: Int) {
         toneGenerator?.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, duracionMs)
 

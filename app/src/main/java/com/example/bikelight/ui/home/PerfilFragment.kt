@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PerfilFragment : Fragment() {
-
     private var _binding: FragmentPerfilBinding? = null
     private val binding get() = _binding
 
@@ -33,7 +32,7 @@ class PerfilFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         cargarDatos()
     }
-
+    // carga datos del perfil desde room y firebase
     private fun cargarDatos() {
         val userAuth = FirebaseAuth.getInstance().currentUser ?: return
         val uid = userAuth.uid
@@ -66,7 +65,7 @@ class PerfilFragment : Fragment() {
                                     email = CryptoUtils.decrypt(userFirebase.email),
                                     fullName = CryptoUtils.decrypt(userFirebase.fullName),
                                     phone = CryptoUtils.decrypt(userFirebase.phone),
-                                    // datos de emergencia:
+                                    // datos de emergencia
                                     emergencyContactName = CryptoUtils.decrypt(userFirebase.emergencyContactName),
                                     emergencyContactPhone = CryptoUtils.decrypt(userFirebase.emergencyContactPhone),
                                     emergencyContactEmail = CryptoUtils.decrypt(userFirebase.emergencyContactEmail)
@@ -75,7 +74,7 @@ class PerfilFragment : Fragment() {
                                 // mostrar datos legibles
                                 pintarDatos(userDescifrado)
 
-                                // guardar los datos legibles en Room local
+                                // actualiza y guarda los datos legibles en Room local
                                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                                     db.userDao().saveUserProfile(userDescifrado)
                                 }
@@ -92,7 +91,7 @@ class PerfilFragment : Fragment() {
             }
         }
     }
-
+    // muestra información del usuario
     private fun pintarDatos(user: UserProfile) {
         binding?.let { b ->
             b.tvProfileName.text = if (!user.fullName.isNullOrBlank()) user.fullName else "No registrado"

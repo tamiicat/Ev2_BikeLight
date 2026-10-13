@@ -14,7 +14,7 @@ class EstadoWifiFragment : Fragment() {
     private var _binding: FragmentEstadoWifiBinding? = null
     private val binding get() = _binding!!
 
-    // viewmodel compartido
+    // viewmodel compartido para obtener estado de conexión wifi
     private val wifiViewModel: WifiConnectionViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -32,7 +32,7 @@ class EstadoWifiFragment : Fragment() {
         observarEstadoWifi()
     }
 
-    // estado wifi
+    // estado wifi y actualiza
     private fun observarEstadoWifi() {
         wifiViewModel.wifiStatus.observe(viewLifecycleOwner) { status ->
             when (status) {

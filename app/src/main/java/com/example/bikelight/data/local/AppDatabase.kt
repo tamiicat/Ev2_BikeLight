@@ -12,7 +12,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
-
+        // obtiene instancia única de bd
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -20,7 +20,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "bikelight_db"
                 )
-                    .fallbackToDestructiveMigration() // <- Evita el cierre forzoso ante cambios de columnas
+                    .fallbackToDestructiveMigration() // evita el cierre forzos
                     .build()
                 INSTANCE = instance
                 instance

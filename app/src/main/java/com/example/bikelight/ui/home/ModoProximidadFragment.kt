@@ -27,13 +27,13 @@ class ModoProximidadFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cargarModoActual()
-
+        // configura las tarjetas de modo proximidad
         binding.cardModoCarretera.setOnClickListener { cambiarModo("Carretera") }
         binding.cardModoCiclovia.setOnClickListener { cambiarModo("Ciclovía") }
         binding.cardModoCiudad.setOnClickListener { cambiarModo("Ciudad") }
         binding.cardModoNocturno.setOnClickListener { cambiarModo("Nocturno") }
     }
-
+    // consulta el modo acutal almacenado en Room y lo muestra en la parte superior
     private fun cargarModoActual() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = AppDatabase.getDatabase(requireContext())
@@ -46,7 +46,7 @@ class ModoProximidadFragment : Fragment() {
             }
         }
     }
-
+    // cambia y guarda el nuevo modo seleccionado en bd local y realtime database
     private fun cambiarModo(nuevoModo: String) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = AppDatabase.getDatabase(requireContext())
@@ -54,10 +54,10 @@ class ModoProximidadFragment : Fragment() {
         binding.tvModoSeleccionado.text = "Modo activo: $nuevoModo"
 
         lifecycleScope.launch(Dispatchers.IO) {
-            // Guardar localmente
+            // guardar localmente
             db.userDao().updateProximityMode(uid, nuevoModo)
 
-            // Sincronizar en Firebase
+            // sincronizar en firebase
             FirebaseDatabase.getInstance().reference.child("users").child(uid)
                 .child("proximityMode").setValue(nuevoModo)
 

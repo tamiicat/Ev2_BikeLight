@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class BicicletaFragment : Fragment() {
-
     private var _binding: FragmentBicicletaBinding? = null
     private val binding get() = _binding!!
 
@@ -31,16 +30,16 @@ class BicicletaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cargarDatosBicicleta()
-
+        // guardar cambios de la bicicleta
         binding.btnGuardarBici.setOnClickListener {
             guardarDatosBicicleta()
         }
     }
-
+    // si el campo está vacío devuelve el valor por defecto
     private fun valorOValorPorDefecto(valor: String?, porDefecto: String): String {
         return if (valor.isNullOrBlank()) porDefecto else valor
     }
-
+    // cargar datos de la bicicleta desde la bd local y sincroniza con firebase
     private fun cargarDatosBicicleta() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val safeContext = context ?: return
@@ -74,27 +73,27 @@ class BicicletaFragment : Fragment() {
                 }
         }
     }
-
-
+    // actualiza la tarjeta e inputs con datos registrados
     private fun pintarFichaYCampos(user: UserProfile) {
         if (_binding == null) return
 
         val anoString = if (user.bikeAno == null || user.bikeAno == 0) null else user.bikeAno.toString()
 
-        // Actualizar tarjeta superior
+        // actualiza tarjeta superior
         binding.tvDisplayTipo.text = "Tipo: ${valorOValorPorDefecto(user.bikeTipo, "No registrado")}"
         binding.tvDisplayMarca.text = "Marca: ${valorOValorPorDefecto(user.bikeMarca, "No registrada")}"
         binding.tvDisplayModelo.text = "Modelo: ${valorOValorPorDefecto(user.bikeModelo, "No registrado")}"
         binding.tvDisplayAno.text = "Año: ${valorOValorPorDefecto(anoString, "No registrado")}"
         binding.tvDisplayColor.text = "Color: ${valorOValorPorDefecto(user.bikeColor, "No registrado")}"
 
-        // Rellenar campos del formulario (si es null se deja vacío para ver el hint)
+        // rellena campos del formulario (si es null se deja vacío)
         binding.etBikeTipo.setText(user.bikeTipo ?: "")
         binding.etBikeMarca.setText(user.bikeMarca ?: "")
         binding.etBikeModelo.setText(user.bikeModelo ?: "")
         binding.etBikeAno.setText(anoString ?: "")
         binding.etBikeColor.setText(user.bikeColor ?: "")
     }
+    // guarda los nuevos datos en Room y firebase
     private fun guardarDatosBicicleta() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val safeContext = context ?: return
@@ -103,12 +102,12 @@ class BicicletaFragment : Fragment() {
         val marca = binding.etBikeMarca.text.toString().trim()
         val modelo = binding.etBikeModelo.text.toString().trim()
         val anoStr = binding.etBikeAno.text.toString().trim()
-        val anoInt = anoStr.toIntOrNull() // Convierte a Int para coincidir con UserProfile
+        val anoInt = anoStr.toIntOrNull() // convierte enter
         val color = binding.etBikeColor.text.toString().trim()
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             val db = AppDatabase.getDatabase(safeContext)
-
+            // actualiza localmente la bd Room
             db.userDao().updateBikeInfo(uid, tipo, marca, modelo, anoStr, color)
 
             val bikeMap: Map<String, Any?> = mapOf(
@@ -118,7 +117,7 @@ class BicicletaFragment : Fragment() {
                 "bikeAno" to anoInt,
                 "bikeColor" to color
             )
-
+            // actualiza en firebase realtime database
             FirebaseDatabase.getInstance().reference.child("users").child(uid)
                 .updateChildren(bikeMap)
                 .addOnSuccessListener {
@@ -138,6 +137,6 @@ class BicicletaFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        _binding = null // limpia bingind previniendo fugas de memoria
     }
 }

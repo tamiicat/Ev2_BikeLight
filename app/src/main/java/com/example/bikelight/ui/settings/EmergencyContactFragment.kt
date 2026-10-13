@@ -35,16 +35,16 @@ class EmergencyContactFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         cargarDatosContacto()
-
+        // guardar datos de contacto de emergencia
         binding.btnSaveContact.setOnClickListener {
             guardarDatosContacto()
         }
     }
-
+    // retorna valor por defecto si el texto es nulo
     private fun valorOValorPorDefecto(valor: String?, porDefecto: String): String {
         return if (valor.isNullOrBlank()) porDefecto else valor
     }
-
+    // carga datos de bd local y sincroniza con firebase
     private fun cargarDatosContacto() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val safeContext = context ?: return
@@ -63,7 +63,7 @@ class EmergencyContactFragment : Fragment() {
                     try {
                         val userFirebase = snapshot.getValue(UserProfile::class.java)
                         userFirebase?.let { profile ->
-                            // DESCIFRADO: Convertir los datos cifrados de Firebase a texto legible
+                            // descifrad a texto legible
                             val profileDescifrado = profile.copy(
                                 emergencyContactName = CryptoUtils.decrypt(profile.emergencyContactName),
                                 emergencyContactPhone = CryptoUtils.decrypt(profile.emergencyContactPhone),
@@ -85,7 +85,7 @@ class EmergencyContactFragment : Fragment() {
                 }
         }
     }
-
+    // actualiza tarjeta y campos del formulario
     private fun pintarFichaYCampos(user: UserProfile) {
         if (_binding == null) return
 
@@ -97,7 +97,7 @@ class EmergencyContactFragment : Fragment() {
         binding.etEmergencyContactPhone.setText(user.emergencyContactPhone ?: "")
         binding.etEmergencyContactEmail.setText(user.emergencyContactEmail ?: "")
     }
-
+    // valida, cifra y guarda información del contacto de emrgencia localmente y en la nube
     private fun guardarDatosContacto() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val safeContext = context ?: return
@@ -127,14 +127,14 @@ class EmergencyContactFragment : Fragment() {
             // guardar en local (Room) en texto plano
             db.userDao().updateEmergencyContact(uid, name, phone, email)
 
-            // datos a cifrar
+            // datos a cifrar antes de enviar a firebase
             val contactMapCifrado: Map<String, Any?> = mapOf(
                 "emergencyContactName" to CryptoUtils.encrypt(name),
                 "emergencyContactPhone" to CryptoUtils.encrypt(phone),
                 "emergencyContactEmail" to CryptoUtils.encrypt(email)
             )
 
-            // enviar a Firebase
+            // enviar información actualizada a firebase
             FirebaseDatabase.getInstance().reference.child("users").child(uid)
                 .updateChildren(contactMapCifrado)
                 .addOnSuccessListener {

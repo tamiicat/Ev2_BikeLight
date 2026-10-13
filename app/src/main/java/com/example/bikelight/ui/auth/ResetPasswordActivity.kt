@@ -11,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 
 class ResetPasswordActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityResetPasswordBinding
     private lateinit var auth: FirebaseAuth
 
@@ -20,6 +19,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // configuración según tema de aplicación
         val ModoOscuro = (resources.configuration.uiMode and
                 Configuration.UI_MODE_NIGHT_MASK) ==
                 Configuration.UI_MODE_NIGHT_YES
@@ -32,6 +32,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        // enviar correo de recuperación de contraseña
         binding.btnSendResetEmail.setOnClickListener {
             val email = binding.etResetEmail.text.toString().trim()
 
@@ -49,12 +50,12 @@ class ResetPasswordActivity : AppCompatActivity() {
 
             enviarCorreoRecuperacion(email)
         }
-
+        // vuelve a pantalla anterior
         binding.btnBackToLogin.setOnClickListener {
             finish()
         }
     }
-
+    // utiliza firebase auth para enviar el correo de restablecimiento
     private fun enviarCorreoRecuperacion(email: String) {
         binding.btnSendResetEmail.isEnabled = false
 
@@ -69,6 +70,7 @@ class ResetPasswordActivity : AppCompatActivity() {
                 finish()
             } else {
                 val exception = task.exception
+                // verifica que el correo ingresado esté asociado a una cuenta
                 if (exception is FirebaseAuthInvalidUserException) {
                     binding.etResetEmail.error = "Este correo no está registrado en BikeLight"
                     binding.etResetEmail.requestFocus()

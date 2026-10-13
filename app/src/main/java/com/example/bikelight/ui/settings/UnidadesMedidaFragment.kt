@@ -12,11 +12,10 @@ import com.example.bikelight.R
 import com.example.bikelight.databinding.FragmentUnidadesMedidaBinding
 
 class UnidadesMedidaFragment : Fragment() {
-
     private var _binding: FragmentUnidadesMedidaBinding? = null
     private val binding get() = _binding!!
 
-    // sistema métrico o imperial"
+    // almacena sistema métrico o imperial
     private var unidadSeleccionada: String = "METRICO"
 
     override fun onCreateView(
@@ -30,7 +29,7 @@ class UnidadesMedidaFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         cargarPreferenciaGuardada()
-
+        // seleccionar modo de unidad de médida
         binding.cardMetrico.setOnClickListener {
             seleccionarModo("METRICO")
         }
@@ -43,12 +42,12 @@ class UnidadesMedidaFragment : Fragment() {
             guardarPreferencia()
         }
     }
-
+    // confirma y giarda preferencia seleccionada
     private fun seleccionarModo(modo: String) {
         unidadSeleccionada = modo
         actualizarEstiloVisual()
     }
-
+    // actualiza según elección
     private fun actualizarEstiloVisual() {
         val colorCard = ContextCompat.getColor(requireContext(), R.color.bikelight_card)
         val colorCardDark = ContextCompat.getColor(requireContext(), R.color.bikelight_card_dark)
@@ -69,13 +68,13 @@ class UnidadesMedidaFragment : Fragment() {
             binding.cardMetrico.strokeWidth = 0
         }
     }
-
+    // lee preferencia almacenada
     private fun cargarPreferenciaGuardada() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         unidadSeleccionada = prefs.getString("unidad_medida", "METRICO") ?: "METRICO"
         actualizarEstiloVisual()
     }
-
+    // guarda la unidad elegida
     private fun guardarPreferencia() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         prefs.edit().putString("unidad_medida", unidadSeleccionada).apply()

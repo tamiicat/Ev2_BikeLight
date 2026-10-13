@@ -26,17 +26,16 @@ import androidx.fragment.app.activityViewModels
 import com.example.bikelight.databinding.FragmentWifiConfigBinding
 
 class WifiConfigFragment : Fragment() {
-
     private var _binding: FragmentWifiConfigBinding? = null
     private val binding get() = _binding!!
 
-    // viewmodel compartido
+    // viewmodel compartido para reportar estado wifi
     private val wifiViewModel: WifiConnectionViewModel by activityViewModels()
 
     private var connectivityManager: ConnectivityManager? = null
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private var wifiManager: WifiManager? = null
-
+    // receptor para escuchar el escaneo de redes wifi
     private val wifiScanReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == WifiManager.SCAN_RESULTS_AVAILABLE_ACTION) {
@@ -44,7 +43,7 @@ class WifiConfigFragment : Fragment() {
             }
         }
     }
-
+    // solicitar permisos de ubicación necesarios para escarear redes disponibles
     private val requestLocationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -73,6 +72,7 @@ class WifiConfigFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        // registra el BroadcastREceiver
         val intentFilter = IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         requireContext().registerReceiver(wifiScanReceiver, intentFilter)
     }
@@ -102,7 +102,7 @@ class WifiConfigFragment : Fragment() {
             connectToEsp32Ap(ssid, pass)
         }
     }
-
+    // comprueba permisos de ubicación antes de escanear
     private fun checkPermissionsAndScan() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -124,7 +124,7 @@ class WifiConfigFragment : Fragment() {
             updateWifiScanList()
         }
     }
-
+    // actualiza la lista de redes wifi encontradas
     private fun updateWifiScanList() {
         _binding?.scanProgressBar?.visibility = View.GONE
         if (ContextCompat.checkSelfPermission(
@@ -149,6 +149,7 @@ class WifiConfigFragment : Fragment() {
             b.lvWifiList.visibility = View.VISIBLE
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, ssids)
             b.lvWifiList.adapter = adapter
+            // permite seleccionar una red y autocompletar el SSID
             b.lvWifiList.setOnItemClickListener { _, _, position, _ ->
                 val selectedSsid = ssids[position]
                 b.etDeviceAp.setText(selectedSsid)
@@ -156,7 +157,7 @@ class WifiConfigFragment : Fragment() {
             }
         }
     }
-
+    // establece contexión con la red
     private fun connectToEsp32Ap(ssid: String, pass: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             binding.progressBar.visibility = View.VISIBLE

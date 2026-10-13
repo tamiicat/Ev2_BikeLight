@@ -8,15 +8,15 @@ import androidx.room.Query
 @Dao
 interface UserDao {
 
-    // Obtener el perfil completo (incluye datos personales y de la bicicleta)
+    // obtiene el perfil completo
     @Query("SELECT * FROM user_profile WHERE uid = :userId LIMIT 1")
     suspend fun getUserProfile(userId: String): UserProfile?
 
-    // Guardar o sobrescribir todo el perfil del usuario
+    // guardar o sobrescribir perfil del usuario
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveUserProfile(profile: UserProfile): Long
 
-    // Actualizar solo los datos de la bicicleta
+    // actualiza los datos de la bicicleta
     @Query("""
         UPDATE user_profile 
         SET bikeTipo = :tipo, 
@@ -35,7 +35,7 @@ interface UserDao {
         color: String
     ): Int
 
-    // Actualizar datos personales básicos
+    // actualizar datos personales básicos
     @Query("""
         UPDATE user_profile 
         SET fullName = :fullName, 
@@ -48,11 +48,11 @@ interface UserDao {
         phone: String
     ): Int
 
-    // Actualizar modo de proximidad seleccionado
+    // actualizar modo de proximidad seleccionado
     @Query("UPDATE user_profile SET proximityMode = :mode WHERE uid = :userId")
     suspend fun updateProximityMode(userId: String, mode: String): Int
 
-    // Actualizar contacto de emergencia (para el botón SOS)
+    // actualiza contacto de emergencia (para el botón SOS)
     @Query("""
         UPDATE user_profile 
         SET emergencyContactName = :name, 

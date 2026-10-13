@@ -40,7 +40,7 @@ class MensajeSosFragment : Fragment() {
             }
             override fun afterTextChanged(s: Editable?) {}
         })
-
+        // escucha cambios de switches para incluir ubicación e info de bicicleta
         binding.switchIncluirUbicacion.setOnCheckedChangeListener { _, _ ->
             actualizarVistaPrevia()
         }
@@ -48,11 +48,11 @@ class MensajeSosFragment : Fragment() {
         binding.switchIncluirBici.setOnCheckedChangeListener { _, _ ->
             actualizarVistaPrevia()
         }
-
+        // guardar msj personalizado de ayuda
         binding.btnGuardarMensajeSos.setOnClickListener {
             guardarConfiguracion()
         }
-
+        // restaurar valores predeterminados
         binding.btnRestaurarDefault.setOnClickListener {
             binding.etMensajeSos.setText(mensajePorDefecto)
             binding.switchIncluirUbicacion.isChecked = true
@@ -61,7 +61,7 @@ class MensajeSosFragment : Fragment() {
             Toast.makeText(requireContext(), "Valores predeterminados restaurados", Toast.LENGTH_SHORT).show()
         }
     }
-
+    // carga configuración local y sincroniza co firebase
     private fun cargarConfiguracion() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         val mensajeGuardado = prefs.getString("sos_mensaje_texto", mensajePorDefecto) ?: mensajePorDefecto
@@ -74,7 +74,7 @@ class MensajeSosFragment : Fragment() {
 
         actualizarVistaPrevia()
 
-        // sincronizar desde firebase
+        // sincronizar y descifra desde firebase
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseDatabase.getInstance().reference.child("users").child(uid).child("sosMessage").get()
             .addOnSuccessListener { snapshot ->
@@ -90,7 +90,7 @@ class MensajeSosFragment : Fragment() {
                 }
             }
     }
-
+    // actualiza vista previa con el texto ingresado
     private fun actualizarVistaPrevia() {
         val textoBase = binding.etMensajeSos.text.toString().trim().ifEmpty { mensajePorDefecto }
         val builder = StringBuilder(textoBase)
@@ -105,7 +105,7 @@ class MensajeSosFragment : Fragment() {
 
         binding.tvVistaPreviaMensaje.text = builder.toString()
     }
-
+    // guarda el msj localmente y respalda en firebase
     private fun guardarConfiguracion() {
         val mensajeFinal = binding.etMensajeSos.text.toString().trim().ifEmpty { mensajePorDefecto }
         val incluirGps = binding.switchIncluirUbicacion.isChecked

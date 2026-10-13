@@ -24,19 +24,23 @@ class AuthActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // inicializa el viewbinding para inflar la interfaz de autenticación
         binding = ActivityAutenticacionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // detecta el tema de la aplicación
         val ModoOscuro = (resources.configuration.uiMode and
                 android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
                 android.content.res.Configuration.UI_MODE_NIGHT_YES
 
+        // cambia el logo según el modo (claro u oscuro)
         if (ModoOscuro) {
             binding.imgLogo.setImageResource(R.drawable.bici_oscuro)
         } else {
             binding.imgLogo.setImageResource(R.drawable.bici)
         }
 
+        // obtiene la instancia de la autenticación de firebase
         auth = FirebaseAuth.getInstance()
 
         // comprobar si ya existe una sesión iniciada
@@ -78,7 +82,7 @@ class AuthActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
-
+    // función para autenticar al usuario
     private fun iniciarSesion(email: String, pass: String) {
         auth.signInWithEmailAndPassword(email, pass).addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -94,7 +98,7 @@ class AuthActivity : AppCompatActivity() {
             }
         }
     }
-
+    // sincroniza y descifra información del perfil del usuario
     private fun sincronizarPerfilYContinuar(uid: String) {
         val dbRef = FirebaseDatabase.getInstance().reference.child("users").child(uid)
 
@@ -110,7 +114,7 @@ class AuthActivity : AppCompatActivity() {
                     emergencyContactPhone = CryptoUtils.decrypt(userFirebase.emergencyContactPhone),
                     emergencyContactEmail = CryptoUtils.decrypt(userFirebase.emergencyContactEmail)
                 )
-
+                // guarda perfil descifrado en bd local Room
                 lifecycleScope.launch(Dispatchers.IO) {
                     val localDb = AppDatabase.getDatabase(applicationContext)
                     localDb.userDao().saveUserProfile(userDescifrado)
@@ -128,7 +132,7 @@ class AuthActivity : AppCompatActivity() {
             irAMain()
         }
     }
-
+    // navegaa la actividad inicial
     private fun irAMain() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

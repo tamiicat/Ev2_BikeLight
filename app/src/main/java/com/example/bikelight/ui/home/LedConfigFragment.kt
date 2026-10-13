@@ -61,7 +61,7 @@ class LedConfigFragment : Fragment() {
             guardarConfiguracionLed()
         }
     }
-
+    // configuración de selectores de colores y efectos
     private fun configurarSpinners() {
         val adapterColor = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesColores)
         val adapterEfecto = ArrayAdapter(requireContext(), R.layout.item_spinner_buzzer, opcionesEfectos)
@@ -69,7 +69,7 @@ class LedConfigFragment : Fragment() {
         binding.spinnerLedColors.adapter = adapterColor
         binding.spinnerEffectColors.adapter = adapterEfecto
     }
-
+    // configuración de barra deslizante para el % del brillo
     private fun configurarSeekBar() {
         binding.seekBarBrightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -81,7 +81,7 @@ class LedConfigFragment : Fragment() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
-
+    // configura botones manuales de encendido o apagado de leds (simulación)
     private fun configurarBotonesManuales() {
         binding.btnActivarLed.setOnClickListener {
             Toast.makeText(requireContext(), "LEDs encendidos manualmente", Toast.LENGTH_SHORT).show()
@@ -91,14 +91,14 @@ class LedConfigFragment : Fragment() {
             Toast.makeText(requireContext(), "LEDs apagados", Toast.LENGTH_SHORT).show()
         }
     }
-
+    // carga valores guardados
     private fun cargarConfiguracionLed() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         val colorGuardado = prefs.getString("led_color", null)
         val efectoGuardado = prefs.getString("led_efecto", null)
         val brilloGuardado = prefs.getInt("led_brillo", -1)
 
-        binding.tvDisplayColor.text = "Patrón de Color: ${colorGuardado ?: "No registrado"}"
+        binding.tvDisplayColor.text = "Colores: ${colorGuardado ?: "No registrado"}"
         binding.tvDisplayEfecto.text = "Efecto: ${efectoGuardado ?: "No registrado"}"
         binding.tvDisplayBrillo.text = if (brilloGuardado != -1) "Nivel de Brillo: $brilloGuardado%" else "Nivel de Brillo: No registrado"
 
@@ -117,7 +117,7 @@ class LedConfigFragment : Fragment() {
             binding.tvValorBrilloActual.text = "$brilloGuardado%"
         }
     }
-
+    // valida y guarda configuración
     private fun guardarConfiguracionLed() {
         val colorSeleccionado = binding.spinnerLedColors.selectedItem.toString()
         val efectoSeleccionado = binding.spinnerEffectColors.selectedItem.toString()
@@ -136,8 +136,8 @@ class LedConfigFragment : Fragment() {
             apply()
         }
 
-        // actualizar card
-        binding.tvDisplayColor.text = "Patrón de Color: $colorSeleccionado"
+        // actualiza tarjeta superior
+        binding.tvDisplayColor.text = "Colores: $colorSeleccionado"
         binding.tvDisplayEfecto.text = "Efecto: $efectoSeleccionado"
         binding.tvDisplayBrillo.text = "Nivel de Brillo: $brilloSeleccionado%"
 

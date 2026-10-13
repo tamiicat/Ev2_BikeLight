@@ -19,7 +19,7 @@ import com.example.bikelight.databinding.FragmentHomeDashboardBinding
 import com.example.bikelight.security.CryptoUtils
 import com.example.bikelight.ui.devices.SimuladorProximidadFragment
 import com.example.bikelight.ui.settings.PreferenciasFragment
-import com.example.bikelight.ui.settings.SosSender
+import com.example.bikelight.ui.home.SosSender
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeDashboardFragment : Fragment() {
-
+    // registra resiltado de permisos de ubicación GPS para SOS
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -65,6 +65,7 @@ class HomeDashboardFragment : Fragment() {
 
         cargarDatosUsuario()
 
+        // configura la navegación de cada tarjeta
         binding.cardSimuladorProximidad.setOnClickListener {
             mainActivity?.cargarFragment(SimuladorProximidadFragment(), "Proximidad del Sensor")
         }
@@ -112,7 +113,7 @@ class HomeDashboardFragment : Fragment() {
                         requireContext(),
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED
-
+                    // solicita permisos de ubicación
                     if (!tienePermisoFine && !tienePermisoCoarse) {
                         locationPermissionLauncher.launch(
                             arrayOf(
@@ -130,7 +131,7 @@ class HomeDashboardFragment : Fragment() {
                 .show()
         }
     }
-
+    // carga los datos del usuario y descifra información clave
     private fun cargarDatosUsuario() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val contextSafe = context ?: return

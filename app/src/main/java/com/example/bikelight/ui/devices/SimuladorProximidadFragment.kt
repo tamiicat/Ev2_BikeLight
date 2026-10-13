@@ -42,24 +42,25 @@ class SimuladorProximidadFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        // carga las preferencias de unidades
         cargarUnidadPreferida()
         configurarListeners()
         iniciarBucleSimulacion()
     }
-
+    // lee las preferencias de unidades de medidas
     private fun cargarUnidadPreferida() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         unidadMedida = prefs.getString("unidad_medida", "METRICO") ?: "METRICO"
         actualizarTextoUnidad()
     }
-
+    // actualiza texto informativo
     private fun actualizarTextoUnidad() {
         val texto = if (unidadMedida == "METRICO") "Métrico (cm, m)" else "Imperial (in, ft)"
         binding.tvUnidadConfigurada.text = "Unidad activa: $texto"
     }
-
+    // configura los eventos de clic
     private fun configurarListeners() {
+        // botón pra alternar entre 'pausa' y 'reunudar' simulación
         binding.btnIniciarPausar.setOnClickListener {
             simulandoActivo = !simulandoActivo
             binding.btnIniciarPausar.text = if (simulandoActivo) "Pausar" else "Reanudar"
@@ -75,13 +76,13 @@ class SimuladorProximidadFragment : Fragment() {
             renderizarLectura(distanciaActualMts)
         }
     }
-
+    // inicia un bucle utilizando corrutinas y lifecycle para simulación de sensor de proximidad
     private fun iniciarBucleSimulacion() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 while (isActive) {
                     if (simulandoActivo) {
-                        // fluctuación continua
+                        // fluctuación continua y aleatoria
                         val delta = (Random.nextFloat() * 0.15f) + 0.05f
                         if (acercando) {
                             distanciaActualMts -= delta
@@ -90,16 +91,17 @@ class SimuladorProximidadFragment : Fragment() {
                             distanciaActualMts += delta
                             if (distanciaActualMts >= maxDistanciaMts) acercando = true
                         }
+                        // actualiza con distancia calculada
                         renderizarLectura(distanciaActualMts)
                     }
-                    delay(300) // 300 ms entre cada lectura
+                    delay(300) // pausa entre cada lectura
                 }
             }
         }
     }
-
+    // procesa y renderia la lectura actual
     private fun renderizarLectura(metros: Float) {
-        // cálculo de porcentaje de cercanía barra de progreso
+        // cálculo de %  de cercanía barra de progreso
         val factorCercania = ((1.0f - (metros / maxDistanciaMts)).coerceIn(0f, 1f) * 100).toInt()
         binding.pbProximidad.progress = factorCercania
 
@@ -112,7 +114,7 @@ class SimuladorProximidadFragment : Fragment() {
                 String.format("%.2f m", metros)
             }
         } else {
-            // Conversión a pies y pulgadas
+            // conversión a pies y pulgadas
             val totalPies = metros * 3.28084f
             if (totalPies < 1.0f) {
                 val pulgadas = (totalPies * 12).toInt()

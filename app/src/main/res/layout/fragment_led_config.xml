@@ -87,7 +87,7 @@
                 android:id="@+id/tvLabelColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Patrón de Color"
+                android:text="Colores"
                 android:textColor="@color/bikelight_primary"
                 android:textSize="15sp"
                 android:textStyle="bold"

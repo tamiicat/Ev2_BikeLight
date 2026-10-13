@@ -1,4 +1,4 @@
-package com.example.bikelight.ui.settings
+package com.example.bikelight.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,11 +17,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+// función principal para armar y enviar la alerta SOS
 object SosSender {
     suspend fun dispararAlertaSos(context: Context) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val prefs = context.getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
 
+        // carga configuración del msj SOS y preferencias (GPS y bicicleta)
         val mensajeBase = prefs.getString("sos_mensaje_texto", "¡EMERGENCIA! He sufrido un incidente en bicicleta.")
             ?: "¡EMERGENCIA! He sufrido un incidente en bicicleta."
         val incluirGps = prefs.getBoolean("sos_incluir_gps", true)
@@ -34,6 +36,7 @@ object SosSender {
             val db = AppDatabase.getDatabase(context)
             val user = db.userDao().getUserProfile(uid)
 
+            // intenta obtener y descifrar el teléfono de emergencia
             if (user != null && !user.emergencyContactPhone.isNullOrBlank()) {
                 // si numero está cifrado, se descrifra
                 telefonoContacto = CryptoUtils.decrypt(user.emergencyContactPhone)
@@ -50,13 +53,14 @@ object SosSender {
                     e.printStackTrace()
                 }
             }
-
+            // prepara los datos de la bicicleta para incluirlos en el msj
             if (user != null && incluirBici) {
                 datosBiciTexto = "\n[Bicicleta: ${user.bikeTipo} ${user.bikeMarca} ${user.bikeModelo} - Color: ${user.bikeColor}]"
             }
         }
 
         withContext(Dispatchers.Main) {
+            // valida que existe un número de contacto de emergencia
             if (telefonoContacto.isBlank()) {
                 Toast.makeText(context, "No tienes un teléfono de emergencia configurado. Ve a Preferencias.", Toast.LENGTH_LONG).show()
                 return@withContext
@@ -82,6 +86,7 @@ object SosSender {
 
             val mensajeFinal = builder.toString()
 
+            // dispara el 'Intent' para enviar un SMS
             try {
                 val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("smsto:${telefonoContacto.replace(" ", "")}")
@@ -95,6 +100,7 @@ object SosSender {
         }
     }
 
+    // obtiene la última ubicación del dispositivo mediante GPS o Red
     @SuppressLint("MissingPermission")
     private fun obtenerCoordenadasReales(context: Context): Location? {
         val hasFine = ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -113,7 +119,7 @@ object SosSender {
         val networkLocation = if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
             locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
         } else null
-
+        // compara cual ubicación es más reciente
         return when {
             gpsLocation != null && networkLocation != null -> {
                 if (gpsLocation.time > networkLocation.time) gpsLocation else networkLocation

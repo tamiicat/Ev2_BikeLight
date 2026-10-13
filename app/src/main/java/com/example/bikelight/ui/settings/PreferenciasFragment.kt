@@ -13,7 +13,6 @@ import com.example.bikelight.MainActivity
 import com.example.bikelight.databinding.FragmentPreferenciasBinding
 
 class PreferenciasFragment : Fragment() {
-
     private var _binding: FragmentPreferenciasBinding? = null
     private val binding get() = _binding!!
 
@@ -48,7 +47,7 @@ class PreferenciasFragment : Fragment() {
             mainActivity?.cargarFragment(MensajeSosFragment(), "Configuración Mensaje SOS")
         }
     }
-
+    // selección del tema de aplicación
     private fun mostrarDialogoTema() {
         val prefs = requireContext().getSharedPreferences("BikeLightPrefs", Context.MODE_PRIVATE)
         val modoActual = prefs.getInt("app_theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
@@ -68,7 +67,7 @@ class PreferenciasFragment : Fragment() {
                     1 -> AppCompatDelegate.MODE_NIGHT_YES
                     else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
                 }
-
+                // guarda preferencias y aplica el modo seleccionado
                 prefs.edit().putInt("app_theme_mode", nuevoModo).apply()
                 AppCompatDelegate.setDefaultNightMode(nuevoModo)
 

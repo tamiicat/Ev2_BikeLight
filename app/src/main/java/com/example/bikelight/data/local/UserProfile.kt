@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "user_profile")
 data class UserProfile(
     @PrimaryKey
+    // campos usuario
     val uid: String = "",
     val email: String = "",
     val fullName: String = "",

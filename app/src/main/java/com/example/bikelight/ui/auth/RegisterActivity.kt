@@ -27,10 +27,11 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // verificación del tema de aplicación
         val ModoOscuro = (resources.configuration.uiMode and
                 android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
                 android.content.res.Configuration.UI_MODE_NIGHT_YES
-
+        // cambia el logo según el tema aplicado (claro u oscuro)
         if (ModoOscuro) {
             binding.imgLogo.setImageResource(R.drawable.bici_oscuro)
         } else {
@@ -40,7 +41,7 @@ class RegisterActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         localDb = AppDatabase.getDatabase(this)
 
-        // registrarse
+        // registrar cuentaa
         binding.btnAction.setOnClickListener {
             val fullName = binding.etFullName.text.toString().trim()
             val username = binding.etUsername.text.toString().trim()
@@ -82,7 +83,7 @@ class RegisterActivity : AppCompatActivity() {
             finish()
         }
     }
-
+    // crear usuario en firebase authentication y almcanemaiento de datos
     private fun registrarUsuario(
         email: String,
         pass: String,
@@ -102,7 +103,7 @@ class RegisterActivity : AppCompatActivity() {
                     }
                 }
 
-                // local en Room (texto plano)
+                // perfil guardado local en Room (texto plano)
                 val userLocal = UserProfile(
                     uid = uid,
                     email = email,
@@ -151,7 +152,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
     }
-
+    // redigirige a la autenticación
     private fun irAAuth() {
         val intent = Intent(this, AuthActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
