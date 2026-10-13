@@ -87,76 +87,85 @@
             android:textColor="@color/bikelight_primary"
             android:layout_marginBottom="12dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tipo"
-            android:textStyle="bold"
-            android:textColor="@color/bikelight_primary" />
-        <EditText
-            android:id="@+id/etBikeTipo"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBikeTipo"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Ej. Montaña, Ruta, Urbana"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Tipo"
+            app:expandedHintEnabled="false">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Marca"
-            android:textStyle="bold"
-            android:textColor="@color/bikelight_primary" />
-        <EditText
-            android:id="@+id/etBikeMarca"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Ej. Trek, Giant, Specialized"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="10dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBikeTipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. Montaña, Ruta, Urbana"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Modelo"
-            android:textStyle="bold"
-            android:textColor="@color/bikelight_primary" />
-        <EditText
-            android:id="@+id/etBikeModelo"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBikeMarca"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Ej. Marlin 7"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Marca"
+            app:expandedHintEnabled="false">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Año"
-            android:textStyle="bold"
-            android:textColor="@color/bikelight_primary" />
-        <EditText
-            android:id="@+id/etBikeAno"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:inputType="number"
-            android:hint="Ej. 2024"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="10dp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBikeMarca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. Trek, Giant, Specialized"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Color"
-            android:textStyle="bold"
-            android:textColor="@color/bikelight_primary" />
-        <EditText
-            android:id="@+id/etBikeColor"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBikeModelo"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="Ej. Negro Mate"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="20dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Marca"
+            app:expandedHintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBikeModelo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. Marlin 7"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBikeAno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Año"
+            app:expandedHintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBikeAno"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. 2024"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilBikeColor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Color"
+            app:expandedHintEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBikeColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. 2024"
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGuardarBici"

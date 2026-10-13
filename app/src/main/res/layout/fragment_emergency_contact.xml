@@ -74,52 +74,73 @@
             android:layout_marginBottom="12dp" />
 
         <!-- nombre contacto -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nombre Completo"
-            android:textColor="@color/bikelight_sos"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/etEmergencyContactName"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmergencyContactName"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:inputType="textPersonName|textCapWords"
-            android:hint="Ej. Alonso Díaz"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Nombre"
+            app:expandedHintEnabled="false"
+            android:textColorHint="@color/bikelight_sos_dark"
+            app:hintTextColor="@color/bikelight_sos_dark"
+            app:boxStrokeColor="@color/bikelight_sos_dark"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxStrokeWidth="1dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmergencyContactName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. Alonso Díaz"
+                android:inputType="textCapWords"
+                android:textColor="@color/bikelight_sos_dark" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- teléfono contacto -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Teléfono de Emergencia"
-            android:textColor="@color/bikelight_sos"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/etEmergencyContactPhone"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmergencyContactPhone"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:inputType="phone"
-            android:hint="Ej. +56912345678"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="10dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Teléfono de Emergencia"
+            app:expandedHintEnabled="false"
+            android:textColorHint="@color/bikelight_sos_dark"
+            app:hintTextColor="@color/bikelight_sos_dark"
+            app:boxStrokeColor="@color/bikelight_sos_dark"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxStrokeWidth="1dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmergencyContactPhone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. +56912345678"
+                android:inputType="textCapWords"
+                android:textColor="@color/bikelight_sos_dark" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- correo electrónico -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Correo Electrónico"
-            android:textColor="@color/bikelight_sos"
-            android:textStyle="bold" />
-        <EditText
-            android:id="@+id/etEmergencyContactEmail"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmergencyContactEmail"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:inputType="textEmailAddress"
-            android:hint="Ej. contacto@gmail.com"
-            android:background="@android:drawable/editbox_background_normal"
-            android:layout_marginBottom="20dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Correo Electrónico"
+            app:expandedHintEnabled="false"
+            android:textColorHint="@color/bikelight_sos_dark"
+            app:hintTextColor="@color/bikelight_sos_dark"
+            app:boxStrokeColor="@color/bikelight_sos_dark"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxStrokeWidth="1dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmergencyContactEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Ej. contacto@gmail.com"
+                android:inputType="textCapWords"
+                android:textColor="@color/bikelight_sos_dark" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- botón -->
         <com.google.android.material.button.MaterialButton
